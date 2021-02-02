@@ -56,9 +56,9 @@ public class TellerMenu extends Menu {
 
         ItemStack ATM = makeItem(Material.ANVIL, "Purchase ATM");
 
-        inventory.setItem(12, savings);
-        inventory.setItem(14, bankNotes);
-        inventory.setItem(16, ATM);
+        inventory.setItem(11, savings);
+        inventory.setItem(13, bankNotes);
+        inventory.setItem(15, ATM);
 
         setFillerGlass();
 
