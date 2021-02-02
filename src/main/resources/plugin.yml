@@ -1,0 +1,10 @@
+name: LittyBank
+version: ${project.version}
+main: me.kodysimpson.littybank.LittyBank
+api-version: 1.16
+depend:
+  - Vault
+  - Citizens
+commands:
+  createteller:
+    description: fuck me dadyy
