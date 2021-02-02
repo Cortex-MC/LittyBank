@@ -23,7 +23,7 @@ public class SavingsMainMenu extends Menu {
 
     @Override
     public int getSlots() {
-        return 54;
+        return 27;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class SavingsMainMenu extends Menu {
 
         }else if (e.getCurrentItem().getType() == Material.BARRIER){
 
-            MenuManager.openMenu(SavingsMainMenu.class, playerMenuUtility.getOwner());
+            MenuManager.openMenu(TellerMenu.class, playerMenuUtility.getOwner());
 
         }
 
@@ -47,8 +47,9 @@ public class SavingsMainMenu extends Menu {
     public void setMenuItems() {
 
         ItemStack createAccount = makeItem(Material.GREEN_GLAZED_TERRACOTTA, "Create Savings Account");
-        inventory.addItem(createAccount);
-
+        ItemStack back = makeItem(Material.BARRIER, "Back");
+        inventory.setItem(13, createAccount);
+        inventory.setItem(26, back);
         setFillerGlass();
 
     }

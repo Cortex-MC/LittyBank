@@ -3,6 +3,7 @@ package me.kodysimpson.littybank.menu.menus.teller;
 import me.kodysimpson.littybank.menu.PlayerMenuUtility;
 import me.kodysimpson.simpapi.exceptions.MenuManagerException;
 import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
+import me.kodysimpson.simpapi.menu.AbstractPlayerMenuUtility;
 import me.kodysimpson.simpapi.menu.Menu;
 import me.kodysimpson.simpapi.menu.MenuManager;
 import org.bukkit.Material;
@@ -11,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class SavingsTierSelectionMenu extends Menu {
 
-    public SavingsTierSelectionMenu(PlayerMenuUtility playerMenuUtility) {
+    public SavingsTierSelectionMenu(AbstractPlayerMenuUtility playerMenuUtility) {
         super(playerMenuUtility);
     }
 
