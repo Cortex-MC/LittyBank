@@ -1,58 +1,73 @@
 package me.kodysimpson.littybank.models;
 
-import net.minecraft.server.v1_16_R3.*;
+import me.kodysimpson.littybank.LittyBank;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 public class BankNote {
 
-    private long value;
+    private PersistentDataContainer container;
+    private float value;
 
     public BankNote() {
         this.value = 0;
     }
 
-    public BankNote(long value) {
+    public BankNote(float value) {
         this.value = value;
     }
 
     public BankNote(ItemStack item) {
-        net.minecraft.server.v1_16_R3.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
-        NBTTagCompound compound = nmsItem.hasTag() ? nmsItem.getTag() : new NBTTagCompound();
-        this.value = compound.getLong("BankNoteValue");
+        this.container = item.getItemMeta().getPersistentDataContainer();
+        this.value = container.get(new NamespacedKey(LittyBank.getPlugin(), "BankNoteValue"), PersistentDataType.LONG);
     }
 
-    public long getValue() {
+    public float getValue() {
         return value;
     }
 
-    public void setValue(long value) {
+    public void setValue(float value) {
         this.value = value;
     }
 
-    public ItemStack createBankNote(int amount) {
+    public static ItemStack createBankNote(long value, int amount) {
         ItemStack note = new ItemStack(Material.PAPER, amount);
         ItemMeta meta = note.getItemMeta();
         meta.setDisplayName(String.format("$%d Bank Note", value));
+
+        PersistentDataContainer container = note.getItemMeta().getPersistentDataContainer();
+
+        container.set(new NamespacedKey(LittyBank.getPlugin(), "BankNoteValue"), PersistentDataType.LONG, value);
+
         note.setItemMeta(meta);
 
-        net.minecraft.server.v1_16_R3.ItemStack nmsNote = CraftItemStack.asNMSCopy(note);
-        NBTTagCompound noteCompound = nmsNote.hasTag() ? nmsNote.getTag() : new NBTTagCompound();
+        return note;
+    }
 
-        noteCompound.setLong("BankNoteValue", value);
-        nmsNote.setTag(noteCompound);
+    public static ItemStack createBankNote(long value) {
+        ItemStack note = new ItemStack(Material.PAPER, 1);
+        ItemMeta meta = note.getItemMeta();
+        meta.setDisplayName(String.format("$%d Bank Note", value));
 
-        return CraftItemStack.asBukkitCopy(nmsNote);
+        PersistentDataContainer container = note.getItemMeta().getPersistentDataContainer();
+
+        container.set(new NamespacedKey(LittyBank.getPlugin(), "BankNoteValue"), PersistentDataType.LONG, value);
+
+        note.setItemMeta(meta);
+
+        return note;
     }
 
     public static boolean isBankNote(ItemStack item) {
-        net.minecraft.server.v1_16_R3.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
-        NBTTagCompound compound = (nmsItem.hasTag()) ? nmsItem.getTag() : new NBTTagCompound();
-        if (compound == null) return false;
 
-        return compound.hasKey("BankNoteValue");
+        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+
+        return container.has(new NamespacedKey(LittyBank.getPlugin(), "BankNoteValue"), PersistentDataType.LONG);
+
     }
 
 }
