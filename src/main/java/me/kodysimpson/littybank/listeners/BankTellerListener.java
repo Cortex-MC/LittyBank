@@ -23,16 +23,15 @@ public class BankTellerListener implements Listener {
 
         ItemStack itemInHand = e.getClicker().getInventory().getItemInMainHand();
 
-        if (BankNote.isBankNote(itemInHand)) {
+        if (itemInHand.hasItemMeta() && BankNote.isBankNote(itemInHand)) {
             redeemBankNote(e.getClicker(), new BankNote(itemInHand).getValue(), itemInHand);
-            return;
+        }else{
+            new TellerMenu(MenuManager.getPlayerMenuUtility(e.getClicker())).open();
         }
-
-        new TellerMenu(MenuManager.getPlayerMenuUtility(e.getClicker())).open();
 
     }
 
-    public void redeemBankNote(Player player, long value, ItemStack item) {
+    public void redeemBankNote(Player player, float value, ItemStack item) {
 
         Economy economy = LittyBank.getEconomy();
         EconomyResponse response = economy.depositPlayer(player, value);

@@ -11,7 +11,10 @@ import me.kodysimpson.simpapi.menu.MenuManager;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Material;
-import org.bukkit.conversations.*;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.ConversationFactory;
+import org.bukkit.conversations.Prompt;
+import org.bukkit.conversations.ValidatingPrompt;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -85,7 +88,7 @@ public class TellerMenu extends Menu {
         Prompt enterAmount = new ValidatingPrompt() {
             @Override
             protected boolean isInputValid(ConversationContext context, String s) {
-                try { Long.parseLong(s); return true; }
+                try { Float.parseFloat(s); return true; }
                 catch (NumberFormatException exception) {
                     if (s.equalsIgnoreCase("cancel")) return true;
                     player.sendMessage("Please enter a valid amount");
@@ -97,7 +100,7 @@ public class TellerMenu extends Menu {
             protected Prompt acceptValidatedInput(ConversationContext context, String s) {
                 if (s.equalsIgnoreCase("cancel")) {
                     player.sendMessage("Transaction has been cancelled");
-                }else withdrawMoney(Long.parseLong(s), player);
+                }else withdrawMoney(Float.parseFloat(s), player);
                 return Prompt.END_OF_CONVERSATION;
             }
 
@@ -116,7 +119,7 @@ public class TellerMenu extends Menu {
 
     }
 
-    public void withdrawMoney(long value, Player player) {
+    public void withdrawMoney(float value, Player player) {
         Economy economy = LittyBank.getEconomy();
 
         if (economy.getBalance(player) >= value){
