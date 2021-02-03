@@ -8,6 +8,7 @@ import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
 import me.kodysimpson.simpapi.menu.AbstractPlayerMenuUtility;
 import me.kodysimpson.simpapi.menu.Menu;
 import me.kodysimpson.simpapi.menu.MenuManager;
+import me.kodysimpson.simpapi.menu.SelfCancelledMenu;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Material;
@@ -22,7 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TellerMenu extends Menu {
+public class TellerMenu extends Menu implements SelfCancelledMenu {
 
     public TellerMenu(AbstractPlayerMenuUtility playerMenuUtility) {
         super(playerMenuUtility);
@@ -101,6 +102,7 @@ public class TellerMenu extends Menu {
                 if (s.equalsIgnoreCase("cancel")) {
                     player.sendMessage("Transaction has been cancelled");
                 }else withdrawMoney(Float.parseFloat(s), player);
+                BankNote.removePlayerInConversation(player);
                 return Prompt.END_OF_CONVERSATION;
             }
 
@@ -110,6 +112,7 @@ public class TellerMenu extends Menu {
             }
         };
 
+        BankNote.addPlayerInConversation(player);
         new ConversationFactory(LittyBank.getPlugin())
                 .withModality(false)
                 .withTimeout(15)
@@ -128,7 +131,7 @@ public class TellerMenu extends Menu {
 
             if (response.transactionSuccess()){
 
-                ItemStack ATM = new BankNote(value).createBankNote(1);
+                ItemStack ATM = BankNote.createBankNote(value);
 
                 player.getInventory().addItem(ATM);
                 player.sendMessage("A bank note of $" + value + " has been added to your inventory.");

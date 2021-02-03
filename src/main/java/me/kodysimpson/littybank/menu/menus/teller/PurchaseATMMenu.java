@@ -5,13 +5,14 @@ import me.kodysimpson.littybank.menu.PlayerMenuUtility;
 import me.kodysimpson.littybank.utils.ColorUtils;
 import me.kodysimpson.simpapi.menu.AbstractPlayerMenuUtility;
 import me.kodysimpson.simpapi.menu.Menu;
+import me.kodysimpson.simpapi.menu.SelfCancelledMenu;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class PurchaseATMMenu extends Menu {
+public class PurchaseATMMenu extends Menu implements SelfCancelledMenu {
 
     public PurchaseATMMenu(AbstractPlayerMenuUtility playerMenuUtility) {
         super(playerMenuUtility);

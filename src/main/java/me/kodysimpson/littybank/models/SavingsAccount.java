@@ -1,5 +1,7 @@
 package me.kodysimpson.littybank.models;
 
+import org.bukkit.inventory.ItemStack;
+
 import java.util.UUID;
 
 /**
@@ -13,6 +15,8 @@ public class SavingsAccount {
     private UUID accountOwner;
     private AccountTier tier;
     private double balance;
+
+    public SavingsAccount() {}
 
     public SavingsAccount(int id, UUID accountOwner, AccountTier tier, double balance) {
         this.id = id;
@@ -51,5 +55,17 @@ public class SavingsAccount {
 
     public void setBalance(double balance) {
         this.balance = balance;
+    }
+
+    public static String formatId(int id) {
+        String stringID = String.valueOf(id);
+        while (stringID.length()<8) {
+            stringID = "0" + stringID;
+        }
+        return "#" + stringID;
+    }
+
+    public static boolean isValidAccount(ItemStack item) {
+        return item.getItemMeta().getDisplayName().contains("Account Number");
     }
 }

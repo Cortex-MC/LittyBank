@@ -1,16 +1,18 @@
 package me.kodysimpson.littybank.menu.menus.teller;
 
+import me.kodysimpson.littybank.Database;
 import me.kodysimpson.littybank.menu.PlayerMenuUtility;
 import me.kodysimpson.simpapi.exceptions.MenuManagerException;
 import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
 import me.kodysimpson.simpapi.menu.AbstractPlayerMenuUtility;
 import me.kodysimpson.simpapi.menu.Menu;
 import me.kodysimpson.simpapi.menu.MenuManager;
+import me.kodysimpson.simpapi.menu.SelfCancelledMenu;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class SavingsMainMenu extends Menu {
+public class SavingsMainMenu extends Menu implements SelfCancelledMenu {
 
     public SavingsMainMenu(AbstractPlayerMenuUtility playerMenuUtility) {
         super(playerMenuUtility);
@@ -33,7 +35,23 @@ public class SavingsMainMenu extends Menu {
 
         if (e.getCurrentItem().getType() == Material.GREEN_GLAZED_TERRACOTTA){
 
+            if (Database.getAccounts(pmu.getOwner()).size() >= 3) {
+                pmu.getOwner().closeInventory();
+                pmu.getOwner().sendMessage("You cannot have more than 3 open accounts.");
+                return;
+            }
+
             MenuManager.openMenu(SavingsTierSelectionMenu.class, playerMenuUtility.getOwner());
+
+        }else if (e.getCurrentItem().getType() == Material.BLUE_GLAZED_TERRACOTTA) {
+
+            if (Database.getAccounts(pmu.getOwner()).isEmpty()) {
+                pmu.getOwner().closeInventory();
+                pmu.getOwner().sendMessage("You don't have any open savings accounts.");
+                return;
+            }
+
+            MenuManager.openMenu(SavingsAccountsMenu.class, pmu.getOwner());
 
         }else if (e.getCurrentItem().getType() == Material.BARRIER){
 
@@ -48,7 +66,9 @@ public class SavingsMainMenu extends Menu {
 
         ItemStack createAccount = makeItem(Material.GREEN_GLAZED_TERRACOTTA, "Create Savings Account");
         ItemStack back = makeItem(Material.BARRIER, "Back");
-        inventory.setItem(13, createAccount);
+        ItemStack yourAccounts = makeItem(Material.BLUE_GLAZED_TERRACOTTA, "Your Savings Accounts");
+        inventory.setItem(11, yourAccounts);
+        inventory.setItem(15, createAccount);
         inventory.setItem(26, back);
         setFillerGlass();
 

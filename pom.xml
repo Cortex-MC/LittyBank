@@ -43,6 +43,15 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <outputDirectory>C:\Users\user\Desktop\Server 1.16.5\plugins</outputDirectory>
+<!--                Comment out mine and add your path here (if want to) -->
+                </configuration>
+            </plugin>
         </plugins>
         <resources>
             <resource>
@@ -99,7 +108,7 @@
         <dependency>
             <groupId>com.github.KodySimpson</groupId>
             <artifactId>SimpAPI</artifactId>
-            <version>v3.0.1</version>
+            <version>1.1</version>
         </dependency>
     </dependencies>
 </project>
