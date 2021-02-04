@@ -4,7 +4,6 @@ import me.kodysimpson.littybank.LittyBank;
 import me.kodysimpson.littybank.menu.PlayerMenuUtility;
 import me.kodysimpson.simpapi.menu.AbstractPlayerMenuUtility;
 import me.kodysimpson.simpapi.menu.Menu;
-import me.kodysimpson.simpapi.menu.SelfCancelledMenu;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -12,7 +11,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class ATMMenu extends Menu implements SelfCancelledMenu {
+public class ATMMenu extends Menu {
 
     public ATMMenu(AbstractPlayerMenuUtility playerMenuUtility) {
         super(playerMenuUtility);
@@ -26,6 +25,11 @@ public class ATMMenu extends Menu implements SelfCancelledMenu {
     @Override
     public int getSlots() {
         return 9;
+    }
+
+    @Override
+    public boolean cancelAllClicks() {
+        return true;
     }
 
     @Override

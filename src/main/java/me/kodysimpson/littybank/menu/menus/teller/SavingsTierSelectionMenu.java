@@ -7,12 +7,11 @@ import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
 import me.kodysimpson.simpapi.menu.AbstractPlayerMenuUtility;
 import me.kodysimpson.simpapi.menu.Menu;
 import me.kodysimpson.simpapi.menu.MenuManager;
-import me.kodysimpson.simpapi.menu.SelfCancelledMenu;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class SavingsTierSelectionMenu extends Menu implements SelfCancelledMenu {
+public class SavingsTierSelectionMenu extends Menu {
 
     public SavingsTierSelectionMenu(AbstractPlayerMenuUtility playerMenuUtility) {
         super(playerMenuUtility);
@@ -26,6 +25,11 @@ public class SavingsTierSelectionMenu extends Menu implements SelfCancelledMenu 
     @Override
     public int getSlots() {
         return 45;
+    }
+
+    @Override
+    public boolean cancelAllClicks() {
+        return true;
     }
 
     @Override
