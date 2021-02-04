@@ -67,10 +67,14 @@ public class BankNote {
         ItemMeta meta = note.getItemMeta();
         meta.setDisplayName(String.format("$%f Bank Note", 1.0*Math.round(value*100)/100));
 
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add("Daddy got a brand new car!!!");
+
         PersistentDataContainer container = meta.getPersistentDataContainer();
 
         container.set(new NamespacedKey(LittyBank.getPlugin(), "BankNoteValue"), PersistentDataType.FLOAT, value);
 
+        meta.setLore(lore);
         note.setItemMeta(meta);
 
         return note;

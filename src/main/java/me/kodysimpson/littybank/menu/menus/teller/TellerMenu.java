@@ -8,7 +8,6 @@ import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
 import me.kodysimpson.simpapi.menu.AbstractPlayerMenuUtility;
 import me.kodysimpson.simpapi.menu.Menu;
 import me.kodysimpson.simpapi.menu.MenuManager;
-import me.kodysimpson.simpapi.menu.SelfCancelledMenu;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Material;
@@ -23,7 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TellerMenu extends Menu implements SelfCancelledMenu {
+public class TellerMenu extends Menu {
 
     public TellerMenu(AbstractPlayerMenuUtility playerMenuUtility) {
         super(playerMenuUtility);
@@ -37,6 +36,11 @@ public class TellerMenu extends Menu implements SelfCancelledMenu {
     @Override
     public int getSlots() {
         return 27;
+    }
+
+    @Override
+    public boolean cancelAllClicks() {
+        return true;
     }
 
     @Override

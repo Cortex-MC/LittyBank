@@ -2,22 +2,19 @@ package me.kodysimpson.littybank.menu.menus.teller;
 
 import me.kodysimpson.littybank.Database;
 import me.kodysimpson.littybank.menu.PlayerMenuUtility;
-import me.kodysimpson.littybank.models.AccountTier;
 import me.kodysimpson.littybank.models.SavingsAccount;
 import me.kodysimpson.simpapi.exceptions.MenuManagerException;
 import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
 import me.kodysimpson.simpapi.menu.AbstractPlayerMenuUtility;
 import me.kodysimpson.simpapi.menu.Menu;
 import me.kodysimpson.simpapi.menu.MenuManager;
-import me.kodysimpson.simpapi.menu.SelfCancelledMenu;
 import org.bukkit.Material;
-import org.bukkit.entity.Item;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class SavingsAccountsMenu extends Menu implements SelfCancelledMenu {
+public class SavingsAccountsMenu extends Menu {
     public SavingsAccountsMenu(AbstractPlayerMenuUtility pmu) {
         super(pmu);
     }
@@ -30,6 +27,11 @@ public class SavingsAccountsMenu extends Menu implements SelfCancelledMenu {
     @Override
     public int getSlots() {
         return 9;
+    }
+
+    @Override
+    public boolean cancelAllClicks() {
+        return true;
     }
 
     @Override

@@ -10,6 +10,7 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -52,7 +53,13 @@ public final class LittyBank extends JavaPlugin {
 
         MenuManager.setup(getServer(), this, PlayerMenuUtility.class);
 
-        getCommand("createteller").setExecutor(new CreateTellerCommand());
+        try {
+            CommandManager.createCoreCommand(this, "litty", "litty bank core", "/litty", Arrays.asList("pickle"),  CreateTellerCommand.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        //getCommand("createteller").setExecutor(new CreateTellerCommand());
     }
 
     private boolean setupEconomy() {

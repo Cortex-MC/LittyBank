@@ -42,9 +42,18 @@ public class BankTellerListener implements Listener {
 
         if (response.transactionSuccess()){
 
-            ItemStack newItem = item.getAmount() > 1 ? BankNote.createBankNote(value, item.getAmount()-1) : new ItemStack(Material.AIR);
+            if (item.getAmount() > 1){
+                player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+                for (int i = 0; i < item.getAmount() - 1; i++){
+                    player.getInventory().addItem(BankNote.createBankNote(value));
+                }
+            }else{
+                player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+            }
+
+            //ItemStack newItem = item.getAmount() > 1 ? BankNote.createBankNote(value, item.getAmount()-1) : new ItemStack(Material.AIR);
             player.sendMessage("You have successfully redeemed $" + value);
-            player.getInventory().setItemInMainHand(newItem);
+            //player.getInventory().setItemInMainHand(newItem);
 
         }else{
 

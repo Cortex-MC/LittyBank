@@ -4,14 +4,12 @@ import me.kodysimpson.littybank.Database;
 import me.kodysimpson.littybank.LittyBank;
 import me.kodysimpson.littybank.menu.PlayerMenuUtility;
 import me.kodysimpson.littybank.models.AccountTier;
-import me.kodysimpson.littybank.models.BankNote;
 import me.kodysimpson.littybank.models.SavingsAccount;
 import me.kodysimpson.simpapi.exceptions.MenuManagerException;
 import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
 import me.kodysimpson.simpapi.menu.AbstractPlayerMenuUtility;
 import me.kodysimpson.simpapi.menu.Menu;
 import me.kodysimpson.simpapi.menu.MenuManager;
-import me.kodysimpson.simpapi.menu.SelfCancelledMenu;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Material;
@@ -19,7 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class ConfirmOpenAccountMenu extends Menu implements SelfCancelledMenu {
+public class ConfirmOpenAccountMenu extends Menu {
 
     public ConfirmOpenAccountMenu(AbstractPlayerMenuUtility playerMenuUtility) {
         super(playerMenuUtility);
@@ -33,6 +31,11 @@ public class ConfirmOpenAccountMenu extends Menu implements SelfCancelledMenu {
     @Override
     public int getSlots() {
         return 9;
+    }
+
+    @Override
+    public boolean cancelAllClicks() {
+        return true;
     }
 
     @Override
