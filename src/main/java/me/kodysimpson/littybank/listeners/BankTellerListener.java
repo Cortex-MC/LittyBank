@@ -21,6 +21,10 @@ public class BankTellerListener implements Listener {
     @EventHandler
     public void onEntityInteract(NPCRightClickEvent e) throws MenuManagerNotSetupException, MenuManagerException {
 
+        // add NPC is Bank Teller check here
+
+        if (BankNote.isPlayerInConversation(e.getClicker())) return;
+
         ItemStack itemInHand = e.getClicker().getInventory().getItemInMainHand();
 
         if (itemInHand.hasItemMeta() && BankNote.isBankNote(itemInHand)) {
@@ -38,7 +42,7 @@ public class BankTellerListener implements Listener {
 
         if (response.transactionSuccess()){
 
-            ItemStack newItem = item.getAmount() > 1 ? new BankNote(value).createBankNote(item.getAmount()-1) : new ItemStack(Material.AIR);
+            ItemStack newItem = item.getAmount() > 1 ? BankNote.createBankNote(value, item.getAmount()-1) : new ItemStack(Material.AIR);
             player.sendMessage("You have successfully redeemed $" + value);
             player.getInventory().setItemInMainHand(newItem);
 

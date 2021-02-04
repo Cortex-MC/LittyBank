@@ -1,16 +1,18 @@
 package me.kodysimpson.littybank.menu.menus.teller;
 
 import me.kodysimpson.littybank.menu.PlayerMenuUtility;
+import me.kodysimpson.littybank.models.AccountTier;
 import me.kodysimpson.simpapi.exceptions.MenuManagerException;
 import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
 import me.kodysimpson.simpapi.menu.AbstractPlayerMenuUtility;
 import me.kodysimpson.simpapi.menu.Menu;
 import me.kodysimpson.simpapi.menu.MenuManager;
+import me.kodysimpson.simpapi.menu.SelfCancelledMenu;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class SavingsTierSelectionMenu extends Menu {
+public class SavingsTierSelectionMenu extends Menu implements SelfCancelledMenu {
 
     public SavingsTierSelectionMenu(AbstractPlayerMenuUtility playerMenuUtility) {
         super(playerMenuUtility);
@@ -31,8 +33,9 @@ public class SavingsTierSelectionMenu extends Menu {
 
         PlayerMenuUtility playerMenuUtility = PMUCaster(pmu, PlayerMenuUtility.class);
 
-        if (e.getCurrentItem().getType() == Material.IRON_INGOT || e.getCurrentItem().getType() == Material.GOLD_INGOT || e.getCurrentItem().getType() == Material.NETHERITE_INGOT){
+        if (AccountTier.isValidTier(e.getCurrentItem())){
 
+            playerMenuUtility.setTier(AccountTier.matchTier(e.getCurrentItem().getType()));
             MenuManager.openMenu(ConfirmOpenAccountMenu.class, playerMenuUtility.getOwner());
 
         }else if (e.getCurrentItem().getType() == Material.BARRIER){
@@ -46,9 +49,9 @@ public class SavingsTierSelectionMenu extends Menu {
     @Override
     public void setMenuItems() {
 
-        ItemStack silver = makeItem(Material.IRON_INGOT, "Silver Tier");
-        ItemStack gold = makeItem(Material.GOLD_INGOT, "Gold Tier");
-        ItemStack plat = makeItem(Material.NETHERITE_INGOT, "Platinum Tier");
+        ItemStack silver = makeItem(AccountTier.SILVER.getAsMaterial(), AccountTier.SILVER.getAsString() + " Tier");
+        ItemStack gold = makeItem(AccountTier.GOLD.getAsMaterial(), AccountTier.GOLD.getAsString() + " Tier");
+        ItemStack plat = makeItem(AccountTier.PLATINUM.getAsMaterial(), AccountTier.PLATINUM.getAsString() + " Tier");
 
         ItemStack back = makeItem(Material.BARRIER, "Back");
 
