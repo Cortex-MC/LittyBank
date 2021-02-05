@@ -89,11 +89,11 @@ public class TellerMenu extends Menu {
     }
 
     public void bankNoteConversation(Player player) {
-        List<String> list = new ArrayList<>();
+
         Prompt enterAmount = new ValidatingPrompt() {
             @Override
             protected boolean isInputValid(ConversationContext context, String s) {
-                try { Float.parseFloat(s); return true; }
+                try { Double.parseDouble(s); return true; }
                 catch (NumberFormatException exception) {
                     if (s.equalsIgnoreCase("cancel")) return true;
                     player.sendMessage("Please enter a valid amount");
@@ -105,7 +105,7 @@ public class TellerMenu extends Menu {
             protected Prompt acceptValidatedInput(ConversationContext context, String s) {
                 if (s.equalsIgnoreCase("cancel")) {
                     player.sendMessage("Transaction has been cancelled");
-                }else withdrawMoney(Float.parseFloat(s), player);
+                }else withdrawMoney(Double.parseDouble(s), player);
                 BankNote.removePlayerInConversation(player);
                 return Prompt.END_OF_CONVERSATION;
             }
@@ -126,7 +126,7 @@ public class TellerMenu extends Menu {
 
     }
 
-    public void withdrawMoney(float value, Player player) {
+    public void withdrawMoney(double value, Player player) {
         Economy economy = LittyBank.getEconomy();
 
         if (economy.getBalance(player) >= value){

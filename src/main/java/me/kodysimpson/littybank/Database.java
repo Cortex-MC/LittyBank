@@ -140,5 +140,20 @@ public class Database {
         return 0;
     }
 
+    public static void setBalance(int id, double balance) {
+
+        try {
+
+            PreparedStatement statement = getConnection().prepareStatement("UPDATE SavingsAccounts SET Balance = ? WHERE AccountID = ?");
+            statement.setDouble(1, balance);
+            statement.setInt(2, id);
+
+            statement.execute();
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
 }
 

@@ -48,9 +48,8 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.2.0</version>
                 <configuration>
-                    <outputDirectory>E:\Minecraft\Test Server\plugins</outputDirectory>
-<!--                    <outputDirectory>C:\Users\user\Desktop\Server 1.16.5\plugins</outputDirectory>-->
-<!--                Comment out mine and add your path here (if want to) -->
+<!--                    <outputDirectory>E:\Minecraft\Test Server\plugins</outputDirectory>-->
+                    <outputDirectory>C:\Users\user\Desktop\Server 1.16.5\plugins</outputDirectory>
                 </configuration>
             </plugin>
         </plugins>
