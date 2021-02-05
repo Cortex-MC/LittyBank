@@ -15,6 +15,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class BankTellerListener implements Listener {
 
@@ -28,32 +31,57 @@ public class BankTellerListener implements Listener {
         ItemStack itemInHand = e.getClicker().getInventory().getItemInMainHand();
 
         if (itemInHand.hasItemMeta() && BankNote.isBankNote(itemInHand)) {
-            redeemBankNote(e.getClicker(), new BankNote(itemInHand).getValue(), itemInHand);
+            redeemBankNote(e.getClicker(), new BankNote(itemInHand).getValue(), itemInHand, e.getClicker().isSneaking());
         }else{
             new TellerMenu(MenuManager.getPlayerMenuUtility(e.getClicker())).open();
         }
 
     }
 
-    public void redeemBankNote(Player player, float value, ItemStack item) {
+    public void redeemBankNote(Player player, double value, ItemStack item, boolean sneaking) {
 
         Economy economy = LittyBank.getEconomy();
+
+        if (sneaking) {
+            List<Integer> slots = new ArrayList<>();
+            value = 0;
+            for (int i=0; i<36; ++i) {
+                ItemStack itemStack = player.getInventory().getItem(i);
+                if (itemStack!=null && BankNote.isBankNote(itemStack)) {
+                    slots.add(i); value += new BankNote(itemStack).getValue();
+                }
+            }
+
+            EconomyResponse response = economy.depositPlayer(player, value);
+
+            if (response.transactionSuccess()){
+
+                slots.forEach(i -> player.getInventory().setItem(i, new ItemStack(Material.AIR)));
+
+                player.sendMessage("You have successfully redeemed $" + value);
+
+            }else{
+
+                player.sendMessage("Transaction Error. Try again later.");
+
+            }
+            return;
+        }
+
         EconomyResponse response = economy.depositPlayer(player, value);
 
         if (response.transactionSuccess()){
 
             if (item.getAmount() > 1){
-                player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
-                for (int i = 0; i < item.getAmount() - 1; i++){
+                player.getInventory().setItemInMainHand(BankNote.createBankNote(value));
+                for (int i = 0; i < item.getAmount() - 2; i++){
                     player.getInventory().addItem(BankNote.createBankNote(value));
                 }
             }else{
                 player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
             }
 
-            //ItemStack newItem = item.getAmount() > 1 ? BankNote.createBankNote(value, item.getAmount()-1) : new ItemStack(Material.AIR);
             player.sendMessage("You have successfully redeemed $" + value);
-            //player.getInventory().setItemInMainHand(newItem);
 
         }else{
 
