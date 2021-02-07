@@ -2,6 +2,8 @@ package me.kodysimpson.littybank.menu.menus.teller;
 
 import me.kodysimpson.littybank.menu.PlayerMenuUtility;
 import me.kodysimpson.littybank.models.AccountTier;
+import me.kodysimpson.littybank.utils.AccountUtils;
+import me.kodysimpson.simpapi.colors.ColorTranslator;
 import me.kodysimpson.simpapi.exceptions.MenuManagerException;
 import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
 import me.kodysimpson.simpapi.menu.AbstractPlayerMenuUtility;
@@ -53,15 +55,24 @@ public class SavingsTierSelectionMenu extends Menu {
     @Override
     public void setMenuItems() {
 
-        ItemStack silver = makeItem(AccountTier.SILVER.getAsMaterial(), AccountTier.SILVER.getAsString() + " Tier");
-        ItemStack gold = makeItem(AccountTier.GOLD.getAsMaterial(), AccountTier.GOLD.getAsString() + " Tier");
-        ItemStack plat = makeItem(AccountTier.PLATINUM.getAsMaterial(), AccountTier.PLATINUM.getAsString() + " Tier");
+        ItemStack silver = makeItem(AccountTier.SILVER.getAsMaterial(), ColorTranslator.translateColorCodes(AccountUtils.getAccountTierName(AccountTier.SILVER)),
+                ColorTranslator.translateColorCodes("&7Price: &a$" + AccountUtils.getAccountPrice(AccountTier.SILVER)),
+                ColorTranslator.translateColorCodes("&7Interest Rate: &a" + AccountUtils.getAccountInterest(AccountTier.SILVER) + "%"));
+        ItemStack gold = makeItem(AccountTier.GOLD.getAsMaterial(), ColorTranslator.translateColorCodes(AccountUtils.getAccountTierName(AccountTier.GOLD)),
+                ColorTranslator.translateColorCodes("&7Price: &a$" + AccountUtils.getAccountPrice(AccountTier.GOLD)),
+                ColorTranslator.translateColorCodes("&7Interest Rate: &a" + AccountUtils.getAccountInterest(AccountTier.GOLD) + "%"));
+        ItemStack plat = makeItem(AccountTier.PLATINUM.getAsMaterial(), ColorTranslator.translateColorCodes(AccountUtils.getAccountTierName(AccountTier.PLATINUM)),
+                ColorTranslator.translateColorCodes("&7Price: &a$" + AccountUtils.getAccountPrice(AccountTier.PLATINUM)),
+                ColorTranslator.translateColorCodes("&7Interest Rate: &a" + AccountUtils.getAccountInterest(AccountTier.PLATINUM) + "%"));
 
-        ItemStack back = makeItem(Material.BARRIER, "Back");
+        ItemStack back = makeItem(Material.BARRIER, ColorTranslator.translateColorCodes("&4&lBack"));
 
         inventory.setItem(11, silver);
         inventory.setItem(13, gold);
         inventory.setItem(15, plat);
         inventory.setItem(31, back);
+
+        setFillerGlass();
+
     }
 }

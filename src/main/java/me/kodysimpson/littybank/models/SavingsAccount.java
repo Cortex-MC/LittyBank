@@ -2,6 +2,7 @@ package me.kodysimpson.littybank.models;
 
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -16,13 +17,18 @@ public class SavingsAccount {
     private AccountTier tier;
     private double balance;
 
+    private Date lastUpdated;
+    private Date lastChecked;
+
     public SavingsAccount() {}
 
-    public SavingsAccount(int id, UUID accountOwner, AccountTier tier, double balance) {
+    public SavingsAccount(int id, UUID accountOwner, AccountTier tier, double balance, Date lastUpdated, Date lastChecked) {
         this.id = id;
         this.accountOwner = accountOwner;
         this.tier = tier;
         this.balance = balance;
+        this.lastUpdated = lastUpdated;
+        this.lastChecked = lastChecked;
     }
 
     public int getId() {
@@ -55,6 +61,22 @@ public class SavingsAccount {
 
     public void setBalance(double balance) {
         this.balance = balance;
+    }
+
+    public Date getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+
+    public Date getLastChecked() {
+        return lastChecked;
+    }
+
+    public void setLastChecked(Date lastChecked) {
+        this.lastChecked = lastChecked;
     }
 
     public static String formatId(int id) {

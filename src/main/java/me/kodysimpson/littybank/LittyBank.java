@@ -4,6 +4,7 @@ import me.kodysimpson.littybank.commands.CreateTellerCommand;
 import me.kodysimpson.littybank.listeners.ATMListener;
 import me.kodysimpson.littybank.listeners.BankTellerListener;
 import me.kodysimpson.littybank.menu.PlayerMenuUtility;
+import me.kodysimpson.littybank.tasks.InterestTask;
 import me.kodysimpson.simpapi.command.CommandManager;
 import me.kodysimpson.simpapi.menu.MenuManager;
 import net.milkbowl.vault.economy.Economy;
@@ -44,6 +45,10 @@ public final class LittyBank extends JavaPlugin {
 
         plugin = this;
 
+        //Setup Config
+        getConfig().options().copyDefaults();
+        saveDefaultConfig();
+
         //Create database tables if not already generated
         url = "jdbc:h2:" + getDataFolder().getAbsolutePath() + "/data/littybank";
         Database.initializeDatabase();
@@ -59,7 +64,8 @@ public final class LittyBank extends JavaPlugin {
             e.printStackTrace();
         }
 
-        //getCommand("createteller").setExecutor(new CreateTellerCommand());
+        new InterestTask().runTaskTimerAsynchronously(this, 20, 1200);
+
     }
 
     private boolean setupEconomy() {
