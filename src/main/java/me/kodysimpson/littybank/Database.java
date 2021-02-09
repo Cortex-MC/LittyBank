@@ -4,12 +4,12 @@ import me.kodysimpson.littybank.models.AccountTier;
 import me.kodysimpson.littybank.models.SavingsAccount;
 import me.kodysimpson.littybank.utils.SavingsAccountsComparator;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 public class Database {
 
@@ -39,7 +39,7 @@ public class Database {
             //Create the desired tables for our database if they don't exist
             Statement statement = getConnection().createStatement();
             //Table for storing all of the locks
-            statement.execute("CREATE TABLE IF NOT EXISTS SavingsAccounts(AccountID int NOT NULL IDENTITY(1, 1), AccountTier varchar(255), OwnerUUID varchar(255), Balance DECIMAL(30,3));");
+            statement.execute("CREATE TABLE IF NOT EXISTS SavingsAccounts(AccountID int NOT NULL IDENTITY(1, 1), AccountTier varchar(255), OwnerUUID varchar(255), Balance DECIMAL(30,3), LastUpdated DATE, LastChecked DATE);");
 
             System.out.println("Database loaded");
 
@@ -58,11 +58,12 @@ public class Database {
 
         try {
             PreparedStatement statement = getConnection()
-                    .prepareStatement("INSERT INTO SavingsAccounts(AccountTier, OwnerUUID, Balance) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                    .prepareStatement("INSERT INTO SavingsAccounts(AccountTier, OwnerUUID, Balance, LastUpdated, LastChecked) VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, savingsAccount.getTier().getAsString());
             statement.setString(2, savingsAccount.getAccountOwner().toString());
             statement.setDouble(3, savingsAccount.getBalance());
-
+            statement.setDate(4, new Date(new java.util.Date().getTime()));
+            statement.setDate(5, new Date(new java.util.Date().getTime()));
 
             statement.execute();
 
@@ -82,6 +83,31 @@ public class Database {
         return 0;
     }
 
+    public static List<SavingsAccount> getAllAccounts() {
+        List<SavingsAccount> accounts = new ArrayList<>();
+
+        try {
+            PreparedStatement statement = getConnection().prepareStatement("SELECT * FROM SavingsAccounts");
+            ResultSet result = statement.executeQuery();
+
+            while (result.next()) {
+                int AccountID = result.getInt(1);
+                AccountTier tier = AccountTier.matchTier(result.getString(2));
+                UUID playerUUID = UUID.fromString(result.getString(3));
+                double balance = result.getDouble(4);
+                Date lastUpdated = result.getDate(5);
+                Date lastChecked = result.getDate(6);
+                accounts.add(new SavingsAccount(AccountID, playerUUID, tier, balance, lastUpdated, lastChecked));
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        Collections.sort(accounts, new SavingsAccountsComparator());
+        return accounts;
+    }
+
     public static List<SavingsAccount> getAccounts(Player player) {
         String uuid = player.getUniqueId().toString();
         List<SavingsAccount> accounts = new ArrayList<>();
@@ -95,7 +121,9 @@ public class Database {
                 int AccountID = result.getInt(1);
                 AccountTier tier = AccountTier.matchTier(result.getString(2));
                 double balance = result.getDouble(4);
-                accounts.add(new SavingsAccount(AccountID, player.getUniqueId(), tier, balance));
+                Date lastUpdated = result.getDate(5);
+                Date lastChecked = result.getDate(6);
+                accounts.add(new SavingsAccount(AccountID, player.getUniqueId(), tier, balance, lastUpdated, lastChecked));
             }
 
         } catch (SQLException throwables) {
@@ -104,6 +132,53 @@ public class Database {
 
         Collections.sort(accounts, new SavingsAccountsComparator());
         return accounts;
+    }
+
+//    public static void updateSavingsAccounts(Collection<SavingsAccount> accounts) {
+//
+//        PreparedStatement statement;
+//
+//        try {
+//
+//            statement = getConnection()
+//                    .prepareStatement("UPDATE SavingsAccount SET OwnerUUID = ?, Tier = ?, Balance = ? WHERE AccountID = ?");
+//            statement.setString(1, account.getAccountOwner().toString());
+//            statement.setString(2, account.getTier().getAsString());
+//            statement.setDouble(3, account.getBalance());
+//            statement.setInt(4, account.getId());
+//
+//            statement.executeUpdate();
+//
+//        } catch (SQLException ex) {
+//            System.out.println("Error updating savings account in the database. #" + account.getId());
+//        }
+//
+//
+//    }
+
+    public static void updateSavingsAccount(SavingsAccount account) {
+
+        PreparedStatement statement;
+
+        try {
+
+            statement = getConnection()
+                    .prepareStatement("UPDATE SavingsAccounts SET OwnerUUID = ?, AccountTier = ?, Balance = ?, LastUpdated = ?, LastChecked = ? WHERE AccountID = ?");
+            statement.setString(1, account.getAccountOwner().toString());
+            statement.setString(2, account.getTier().getAsString());
+            statement.setDouble(3, account.getBalance());
+            statement.setDate(4, new Date(account.getLastUpdated().getTime()));
+            statement.setDate(5, new Date(account.getLastChecked().getTime()));
+            statement.setInt(6, account.getId());
+
+            statement.executeUpdate();
+
+        } catch (SQLException ex) {
+            System.out.println(ex);
+            System.out.println("Error updating savings account in the database. #" + account.getId());
+        }
+
+
     }
 
     public static void deleteAccount(int id) {

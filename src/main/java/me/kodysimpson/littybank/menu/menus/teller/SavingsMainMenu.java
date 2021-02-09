@@ -2,6 +2,7 @@ package me.kodysimpson.littybank.menu.menus.teller;
 
 import me.kodysimpson.littybank.Database;
 import me.kodysimpson.littybank.menu.PlayerMenuUtility;
+import me.kodysimpson.simpapi.colors.ColorTranslator;
 import me.kodysimpson.simpapi.exceptions.MenuManagerException;
 import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
 import me.kodysimpson.simpapi.menu.AbstractPlayerMenuUtility;
@@ -68,12 +69,14 @@ public class SavingsMainMenu extends Menu {
     @Override
     public void setMenuItems() {
 
-        ItemStack createAccount = makeItem(Material.GREEN_GLAZED_TERRACOTTA, "Create Savings Account");
-        ItemStack back = makeItem(Material.BARRIER, "Back");
-        ItemStack yourAccounts = makeItem(Material.BLUE_GLAZED_TERRACOTTA, "Your Savings Accounts");
+        ItemStack createAccount = makeItem(Material.GREEN_GLAZED_TERRACOTTA, ColorTranslator.translateColorCodes("&#54d13f&lCreate Savings Account"),
+                ColorTranslator.translateColorCodes("&7Savings account can be"), ColorTranslator.translateColorCodes("&7used to gain money passively"), ColorTranslator.translateColorCodes("&7over time."));
+        ItemStack back = makeItem(Material.BARRIER, ColorTranslator.translateColorCodes("&4&lBack"));
+        ItemStack yourAccounts = makeItem(Material.BLUE_GLAZED_TERRACOTTA, ColorTranslator.translateColorCodes("&#3fa8d1&lYour Savings Accounts"),
+                ColorTranslator.translateColorCodes("&7View and manage all"), ColorTranslator.translateColorCodes("&7of your accounts."));
         inventory.setItem(11, yourAccounts);
         inventory.setItem(15, createAccount);
-        inventory.setItem(26, back);
+        inventory.setItem(22, back);
         setFillerGlass();
 
     }
