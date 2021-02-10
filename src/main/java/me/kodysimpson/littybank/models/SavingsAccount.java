@@ -88,6 +88,6 @@ public class SavingsAccount {
     }
 
     public static boolean isValidAccount(ItemStack item) {
-        return item.getItemMeta().getDisplayName().contains("Account Number");
+        return item.getItemMeta().getDisplayName().contains("Account");
     }
 }

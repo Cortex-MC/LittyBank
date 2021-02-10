@@ -41,7 +41,7 @@ public class SavingsTierSelectionMenu extends Menu {
 
         if (AccountTier.isValidTier(e.getCurrentItem())){
 
-            playerMenuUtility.setTier(AccountTier.matchTier(e.getCurrentItem().getType()));
+            playerMenuUtility.setTierItem(e.getCurrentItem());
             MenuManager.openMenu(ConfirmOpenAccountMenu.class, playerMenuUtility.getOwner());
 
         }else if (e.getCurrentItem().getType() == Material.BARRIER){

@@ -2,11 +2,13 @@ package me.kodysimpson.littybank.menu.menus.teller;
 
 import me.kodysimpson.littybank.LittyBank;
 import me.kodysimpson.littybank.menu.PlayerMenuUtility;
-import me.kodysimpson.littybank.utils.ColorUtils;
+import me.kodysimpson.littybank.utils.MessageUtils;
+import me.kodysimpson.simpapi.colors.ColorTranslator;
 import me.kodysimpson.simpapi.menu.AbstractPlayerMenuUtility;
 import me.kodysimpson.simpapi.menu.Menu;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -54,18 +56,18 @@ public class PurchaseATMMenu extends Menu {
 
                     playerMenuUtility.getOwner().getInventory().addItem(ATM);
                     playerMenuUtility.getOwner().closeInventory();
-                    playerMenuUtility.getOwner().sendMessage("Purchased ATM; given.");
+                    playerMenuUtility.getOwner().sendMessage(MessageUtils.message("Purchased ATM; given."));
 
                 }else{
 
                     playerMenuUtility.getOwner().closeInventory();
-                    playerMenuUtility.getOwner().sendMessage("Transaction Error. Try again later.");
+                    playerMenuUtility.getOwner().sendMessage(MessageUtils.message("Transaction Error. Try again later."));
 
                 }
 
             }else{
                 playerMenuUtility.getOwner().closeInventory();
-                playerMenuUtility.getOwner().sendMessage("You cant afford it you poor bitch.");
+                playerMenuUtility.getOwner().sendMessage(MessageUtils.message("You cant afford it you poor bitch."));
             }
 
         }
@@ -75,13 +77,14 @@ public class PurchaseATMMenu extends Menu {
     @Override
     public void setMenuItems() {
 
-        ItemStack back = makeItem(Material.BARRIER, "Back");
+        ItemStack back = makeItem(Material.BARRIER, ColorTranslator.translateColorCodes("&4&lBack"));
 
-        ItemStack info = makeItem(Material.ANVIL, ColorUtils.translateColorCodes("&6&lATM"),
-                "An ATM is a portable machine you can use to withdraw money from.",
-                "Cost: $100000000000000");
+        ItemStack info = makeItem(Material.ANVIL, ColorTranslator.translateColorCodes("&6&lATM"),
+                ColorTranslator.translateColorCodes("&7An ATM is a portable machine"),
+                ColorTranslator.translateColorCodes("&7you can withdraw money from."),
+                "\n&7Cost: &a$10000");
 
-        ItemStack purchase = makeItem(Material.BELL, "Purchase ATM");
+        ItemStack purchase = makeItem(Material.BELL, ColorTranslator.translateColorCodes("&#31d428&lPurchase ATM"));
 
         inventory.setItem(2, back);
         inventory.setItem(5, info);

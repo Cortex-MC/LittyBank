@@ -5,6 +5,7 @@ import me.kodysimpson.littybank.LittyBank;
 import me.kodysimpson.littybank.menu.PlayerMenuUtility;
 import me.kodysimpson.littybank.models.AccountTier;
 import me.kodysimpson.littybank.models.SavingsAccount;
+import me.kodysimpson.littybank.utils.MessageUtils;
 import me.kodysimpson.simpapi.exceptions.MenuManagerException;
 import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
 import me.kodysimpson.simpapi.menu.AbstractPlayerMenuUtility;
@@ -44,7 +45,7 @@ public class ConfirmOpenAccountMenu extends Menu {
 
         if (e.getCurrentItem().getType() == Material.BELL){
 
-            openAccount(AccountTier.matchTier(e.getInventory().getItem(1).getType()), pmu.getOwner());
+            openAccount(AccountTier.matchTier(e.getInventory().getItem(0).getType()), pmu.getOwner());
             pmu.getOwner().closeInventory();
 
         }else if (e.getCurrentItem().getType() == Material.BARRIER){
@@ -62,11 +63,10 @@ public class ConfirmOpenAccountMenu extends Menu {
 
         ItemStack yes = makeItem(Material.BELL, "Yes");
         ItemStack no = makeItem(Material.BARRIER, "No");
-        AccountTier tier = playerMenuUtility.getTier();
+        ItemStack tierItem = playerMenuUtility.getTierItem();
 
-        ItemStack tierItem = makeItem(tier.getAsMaterial(), tier.getAsString() + " Tier");
 
-        inventory.setItem(1, tierItem);
+        inventory.setItem(0, tierItem);
         inventory.setItem(3, no);
         inventory.setItem(5, yes);
 
@@ -75,6 +75,7 @@ public class ConfirmOpenAccountMenu extends Menu {
 
     public void openAccount(AccountTier tier, Player player) {
 
+        player.sendMessage(tier.getAsString());
         double fee = tier.getOpeningFee();
         Economy economy = LittyBank.getEconomy();
 
@@ -91,17 +92,17 @@ public class ConfirmOpenAccountMenu extends Menu {
 
                 Database.createAccount(account);
 
-                player.sendMessage("You have succesfully opened a Savings Account.");
+                player.sendMessage(MessageUtils.message("You have successfully opened a Savings Account."));
 
             }else{
 
-                player.sendMessage("Transaction Error. Try again later.");
+                player.sendMessage(MessageUtils.message("Transaction Error. Try again later."));
 
             }
 
         }else{
 
-            player.sendMessage("You cant afford it you poor bitch.");
+            player.sendMessage(MessageUtils.message("You cant afford it you poor bitch."));
 
         }
     }

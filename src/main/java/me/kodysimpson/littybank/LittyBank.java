@@ -64,7 +64,8 @@ public final class LittyBank extends JavaPlugin {
             e.printStackTrace();
         }
 
-        new InterestTask().runTaskTimerAsynchronously(this, 20, 1200);
+        // 60 seconds for testing
+        new InterestTask().runTaskTimerAsynchronously(this, 20, 20 * 60);
 
     }
 

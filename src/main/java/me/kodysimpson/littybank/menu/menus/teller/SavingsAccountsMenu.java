@@ -2,7 +2,9 @@ package me.kodysimpson.littybank.menu.menus.teller;
 
 import me.kodysimpson.littybank.Database;
 import me.kodysimpson.littybank.menu.PlayerMenuUtility;
+import me.kodysimpson.littybank.models.BankNote;
 import me.kodysimpson.littybank.models.SavingsAccount;
+import me.kodysimpson.simpapi.colors.ColorTranslator;
 import me.kodysimpson.simpapi.exceptions.MenuManagerException;
 import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
 import me.kodysimpson.simpapi.menu.AbstractPlayerMenuUtility;
@@ -44,7 +46,7 @@ public class SavingsAccountsMenu extends Menu {
             MenuManager.openMenu(SavingsMainMenu.class, pmu.getOwner());
 
         }else if (SavingsAccount.isValidAccount(e.getCurrentItem())) {
-
+            System.out.println(e.getCurrentItem().getItemMeta().getDisplayName());
             playerMenuUtility.setAccountName(e.getCurrentItem().getItemMeta().getDisplayName());
             MenuManager.openMenu(AccountOptionsMenu.class, pmu.getOwner());
         }
@@ -56,13 +58,13 @@ public class SavingsAccountsMenu extends Menu {
 
         accounts.forEach(account -> {
             ItemStack item = makeItem(account.getTier().getAsMaterial(),
-                    "Account Number: " + SavingsAccount.formatId(account.getId()),
-                    "Balance: " + account.getBalance());
+                    ColorTranslator.translateColorCodes("&#e64764&lAccount &#d42847" + SavingsAccount.formatId(account.getId())),
+                    ColorTranslator.translateColorCodes("&7Balance: &a" + BankNote.formatBalance(account.getBalance())));
             inventory.addItem(item);
         });
 
 
-        ItemStack back = makeItem(Material.BARRIER, "Back");
+        ItemStack back = makeItem(Material.BARRIER, "&4&lBack");
         inventory.setItem(8, back);
     }
 }

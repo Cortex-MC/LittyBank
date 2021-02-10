@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 public class PlayerMenuUtility extends AbstractPlayerMenuUtility {
 
     private Location atmLocation;
-    private AccountTier tier;
+    private ItemStack tierItem;
     private String accountName;
 
     public PlayerMenuUtility(Player p) {
@@ -25,12 +25,12 @@ public class PlayerMenuUtility extends AbstractPlayerMenuUtility {
         this.atmLocation = atmLocation;
     }
 
-    public AccountTier getTier() {
-        return tier;
+    public ItemStack getTierItem() {
+        return tierItem;
     }
 
-    public void setTier(AccountTier tier) {
-        this.tier = tier;
+    public void setTierItem(ItemStack tierItem) {
+        this.tierItem = tierItem;
     }
 
     public String getAccountName() {

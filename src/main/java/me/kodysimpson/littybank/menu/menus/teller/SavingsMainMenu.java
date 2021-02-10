@@ -2,6 +2,7 @@ package me.kodysimpson.littybank.menu.menus.teller;
 
 import me.kodysimpson.littybank.Database;
 import me.kodysimpson.littybank.menu.PlayerMenuUtility;
+import me.kodysimpson.littybank.utils.MessageUtils;
 import me.kodysimpson.simpapi.colors.ColorTranslator;
 import me.kodysimpson.simpapi.exceptions.MenuManagerException;
 import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
@@ -42,7 +43,7 @@ public class SavingsMainMenu extends Menu {
 
             if (Database.getAccounts(pmu.getOwner()).size() >= 3) {
                 pmu.getOwner().closeInventory();
-                pmu.getOwner().sendMessage("You cannot have more than 3 open accounts.");
+                pmu.getOwner().sendMessage(MessageUtils.message("You cannot have more than 3 open accounts."));
                 return;
             }
 
@@ -52,7 +53,7 @@ public class SavingsMainMenu extends Menu {
 
             if (Database.getAccounts(pmu.getOwner()).isEmpty()) {
                 pmu.getOwner().closeInventory();
-                pmu.getOwner().sendMessage("You don't have any open savings accounts.");
+                pmu.getOwner().sendMessage(MessageUtils.message("You don't have any open savings accounts."));
                 return;
             }
 
