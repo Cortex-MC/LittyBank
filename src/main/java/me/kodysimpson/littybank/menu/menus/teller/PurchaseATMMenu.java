@@ -2,6 +2,7 @@ package me.kodysimpson.littybank.menu.menus.teller;
 
 import me.kodysimpson.littybank.LittyBank;
 import me.kodysimpson.littybank.menu.PlayerMenuUtility;
+import me.kodysimpson.littybank.models.ATM;
 import me.kodysimpson.littybank.utils.MessageUtils;
 import me.kodysimpson.simpapi.colors.ColorTranslator;
 import me.kodysimpson.simpapi.menu.AbstractPlayerMenuUtility;
@@ -10,6 +11,7 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -43,32 +45,8 @@ public class PurchaseATMMenu extends Menu {
             new TellerMenu(playerMenuUtility).open();
         }else if (e.getCurrentItem().getType() == Material.BELL){
 
-            Economy economy = LittyBank.getEconomy();
-
-            if (economy.getBalance(playerMenuUtility.getOwner()) >= 50.0){
-
-                EconomyResponse response = economy.withdrawPlayer(playerMenuUtility.getOwner(), 50);
-
-                if (response.transactionSuccess()){
-
-                    //chicka chicka chicka! slim shady! hotter than a set of twin babies!!!
-                    ItemStack ATM = makeItem(Material.ANVIL, "ATM");
-
-                    playerMenuUtility.getOwner().getInventory().addItem(ATM);
-                    playerMenuUtility.getOwner().closeInventory();
-                    playerMenuUtility.getOwner().sendMessage(MessageUtils.message("Purchased ATM; given."));
-
-                }else{
-
-                    playerMenuUtility.getOwner().closeInventory();
-                    playerMenuUtility.getOwner().sendMessage(MessageUtils.message("Transaction Error. Try again later."));
-
-                }
-
-            }else{
-                playerMenuUtility.getOwner().closeInventory();
-                playerMenuUtility.getOwner().sendMessage(MessageUtils.message("You cant afford it you poor bitch."));
-            }
+            purchaseATM(playerMenuUtility.getOwner());
+            playerMenuUtility.getOwner().closeInventory();
 
         }
 
@@ -90,5 +68,30 @@ public class PurchaseATMMenu extends Menu {
         inventory.setItem(5, info);
         inventory.setItem(7, purchase);
 
+    }
+
+    public void purchaseATM(Player player) {
+        Economy economy = LittyBank.getEconomy();
+
+        if (economy.getBalance(player) >= 50.0){
+
+            EconomyResponse response = economy.withdrawPlayer(player, 50);
+
+            if (response.transactionSuccess()){
+
+                //chicka chicka chicka! slim shady! hotter than a set of twin babies!!!
+                player.getInventory().addItem(ATM.createATM(player));
+                player.sendMessage(MessageUtils.message("Purchased ATM; given."));
+
+            }else{
+
+                player.sendMessage(MessageUtils.message("Transaction Error. Try again later."));
+
+            }
+
+        }else{
+
+            player.sendMessage(MessageUtils.message("You cant afford it you poor bitch."));
+        }
     }
 }

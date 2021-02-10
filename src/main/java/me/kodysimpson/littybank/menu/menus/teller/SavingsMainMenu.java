@@ -57,6 +57,7 @@ public class SavingsMainMenu extends Menu {
                 return;
             }
 
+            playerMenuUtility.setLastMenu(this);
             MenuManager.openMenu(SavingsAccountsMenu.class, pmu.getOwner());
 
         }else if (e.getCurrentItem().getType() == Material.BARRIER){

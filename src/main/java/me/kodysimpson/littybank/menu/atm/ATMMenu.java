@@ -2,12 +2,19 @@ package me.kodysimpson.littybank.menu.atm;
 
 import me.kodysimpson.littybank.LittyBank;
 import me.kodysimpson.littybank.menu.PlayerMenuUtility;
+import me.kodysimpson.littybank.menu.menus.teller.SavingsAccountsMenu;
+import me.kodysimpson.simpapi.colors.ColorTranslator;
+import me.kodysimpson.simpapi.exceptions.MenuManagerException;
+import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
 import me.kodysimpson.simpapi.menu.AbstractPlayerMenuUtility;
 import me.kodysimpson.simpapi.menu.Menu;
+import me.kodysimpson.simpapi.menu.MenuManager;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -33,7 +40,7 @@ public class ATMMenu extends Menu {
     }
 
     @Override
-    public void handleMenu(InventoryClickEvent e) {
+    public void handleMenu(InventoryClickEvent e) throws MenuManagerNotSetupException, MenuManagerException {
 
         PlayerMenuUtility playerMenuUtility = (PlayerMenuUtility) pmu;
 
@@ -44,20 +51,12 @@ public class ATMMenu extends Menu {
         }else if (e.getCurrentItem().getType() == Material.BIRCH_SIGN){
 
             playerMenuUtility.getOwner().closeInventory();
-
-            Economy economy = LittyBank.getEconomy();
-            double balance = economy.getBalance(playerMenuUtility.getOwner());
-
-            ArmorStand balanceH = (ArmorStand) playerMenuUtility.getOwner().getWorld().spawnEntity(playerMenuUtility.getOwner().getLocation(), EntityType.ARMOR_STAND);
-            balanceH.setCustomNameVisible(true);
-            balanceH.setCustomName("Checking Balance: $" + balance);
-            balanceH.setVisible(false);
-            balanceH.setInvulnerable(true);
-            balanceH.teleport(playerMenuUtility.getAtmLocation().add(0.5, -0.25, 0.5));
+            displayBalance(playerMenuUtility.getOwner());
 
         }else if(e.getCurrentItem().getType() == Material.PAPER){
 
-            System.out.println("ewr");
+            playerMenuUtility.setLastMenu(this);
+            MenuManager.openMenu(SavingsAccountsMenu.class, playerMenuUtility.getOwner());
 
         }
 
@@ -66,15 +65,29 @@ public class ATMMenu extends Menu {
     @Override
     public void setMenuItems() {
 
-        ItemStack close = makeItem(Material.BARRIER, "Close");
+        ItemStack close = makeItem(Material.BARRIER, ColorTranslator.translateColorCodes("&4&lClose"));
 
-        ItemStack balance = makeItem(Material.BIRCH_SIGN, "See Balance");
+        ItemStack balance = makeItem(Material.BIRCH_SIGN, ColorTranslator.translateColorCodes("&a&lCheck Balance"));
 
-        ItemStack withdraw = makeItem(Material.PAPER, "Withdraw Funds");
+        ItemStack withdraw = makeItem(Material.PAPER, ColorTranslator.translateColorCodes("&#bd883e&lManage Savings Accounts"));
 
         inventory.setItem(2, close);
         inventory.setItem(4, balance);
         inventory.setItem(6, withdraw);
 
+    }
+
+    public void displayBalance(Player player) {
+        PlayerMenuUtility playerMenuUtility = (PlayerMenuUtility) pmu;
+
+        Economy economy = LittyBank.getEconomy();
+        double balance = economy.getBalance(player);
+
+        ArmorStand balanceH = (ArmorStand) player.getWorld().spawnEntity(player.getLocation(), EntityType.ARMOR_STAND);
+        balanceH.setCustomNameVisible(true);
+        balanceH.setCustomName("Checking Balance: $" + balance);
+        balanceH.setVisible(false);
+        balanceH.setInvulnerable(true);
+        balanceH.teleport(playerMenuUtility.getAtmLocation().add(0.5, -0.25, 0.5));
     }
 }

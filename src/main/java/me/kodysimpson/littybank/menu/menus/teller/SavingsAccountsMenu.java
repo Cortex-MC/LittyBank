@@ -43,7 +43,7 @@ public class SavingsAccountsMenu extends Menu {
 
         if (e.getCurrentItem().getType() == Material.BARRIER) {
 
-            MenuManager.openMenu(SavingsMainMenu.class, pmu.getOwner());
+            MenuManager.openMenu(playerMenuUtility.getLastMenu().getClass(), pmu.getOwner());
 
         }else if (SavingsAccount.isValidAccount(e.getCurrentItem())) {
             System.out.println(e.getCurrentItem().getItemMeta().getDisplayName());
@@ -64,7 +64,7 @@ public class SavingsAccountsMenu extends Menu {
         });
 
 
-        ItemStack back = makeItem(Material.BARRIER, "&4&lBack");
+        ItemStack back = makeItem(Material.BARRIER, ColorTranslator.translateColorCodes("&4&lBack"));
         inventory.setItem(8, back);
     }
 }
