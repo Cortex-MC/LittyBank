@@ -46,7 +46,7 @@ public class SavingsAccountsMenu extends Menu {
             MenuManager.openMenu(playerMenuUtility.getLastMenu().getClass(), pmu.getOwner());
 
         }else if (SavingsAccount.isValidAccount(e.getCurrentItem())) {
-            System.out.println(e.getCurrentItem().getItemMeta().getDisplayName());
+
             playerMenuUtility.setAccountName(e.getCurrentItem().getItemMeta().getDisplayName());
             MenuManager.openMenu(AccountOptionsMenu.class, pmu.getOwner());
         }

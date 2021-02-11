@@ -2,10 +2,7 @@ package me.kodysimpson.littybank.models;
 
 import me.kodysimpson.littybank.LittyBank;
 import me.kodysimpson.simpapi.colors.ColorTranslator;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
@@ -16,20 +13,39 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class ATM {
 
-    private static List<Location> atmLocations = new ArrayList<>();
+    private Player owner;
+    private Location location;
 
-    public static List<Location> getAtmLocations() {
-        return atmLocations;
+    public ATM(Player owner, Location location) {
+        this.owner = owner;
+        this.location = location;
     }
 
-    public static void setAtmLocations(List<Location> atmLocations) {
-        ATM.atmLocations = atmLocations;
+    public ATM(ItemStack item) {
+        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        String uuid = container.get(new NamespacedKey(LittyBank.getPlugin(), "ATMOwner"), PersistentDataType.STRING);
+        this.owner = Bukkit.getPlayer(UUID.fromString(uuid));
     }
 
+    public Player getOwner() {
+        return owner;
+    }
 
+    public void setOwner(Player owner) {
+        this.owner = owner;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
 
     public static ItemStack createATM(Player player) {
         ItemStack atm = new ItemStack(Material.ANVIL, 1);
@@ -47,15 +63,6 @@ public class ATM {
 
         return atm;
     }
-
-
-
-    public static Player getOwner(ItemStack item) {
-        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
-        String uuid = container.get(new NamespacedKey(LittyBank.getPlugin(), "ATMOwner"), PersistentDataType.STRING);
-        return Bukkit.getPlayer(uuid);
-    }
-
 
 
     public static boolean isValidATM(ItemStack item) {
