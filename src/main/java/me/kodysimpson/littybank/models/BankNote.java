@@ -1,6 +1,7 @@
 package me.kodysimpson.littybank.models;
 
 import me.kodysimpson.littybank.LittyBank;
+import me.kodysimpson.simpapi.colors.ColorTranslator;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -65,12 +66,9 @@ public class BankNote {
     public static ItemStack createBankNote(double value) {
         ItemStack note = new ItemStack(Material.PAPER, 1);
         ItemMeta meta = note.getItemMeta();
-        String valueString = String.valueOf(Math.round(value*100.0));
-        valueString = valueString.substring(0, valueString.length()-2) + "." + valueString.substring(valueString.length()-2);
-        meta.setDisplayName(String.format("$%s Bank Note", valueString));
-
+        meta.setDisplayName(ColorTranslator.translateColorCodes("&#57bade&lBank Note"));
         ArrayList<String> lore = new ArrayList<>();
-        lore.add("Daddy got a brand new car!!!");
+        lore.add(ColorTranslator.translateColorCodes("&7Value: &a$" + formatBalance(value)));
 
         PersistentDataContainer container = meta.getPersistentDataContainer();
 
@@ -103,6 +101,12 @@ public class BankNote {
     public static boolean isPlayerInConversation(Player player) {
         String uuid = player.getUniqueId().toString();
         return playersInConversation.contains(uuid);
+    }
+
+    public static String formatBalance(double value) {
+        if (value == 0) return "00.00";
+        String valueString = String.valueOf(Math.round(value*100.0));
+        return valueString.substring(0, valueString.length()-2) + "." + valueString.substring(valueString.length()-2);
     }
 
 }

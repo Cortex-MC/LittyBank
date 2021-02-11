@@ -1,8 +1,12 @@
 package me.kodysimpson.littybank;
 
+import me.kodysimpson.littybank.models.ATM;
 import me.kodysimpson.littybank.models.AccountTier;
 import me.kodysimpson.littybank.models.SavingsAccount;
 import me.kodysimpson.littybank.utils.SavingsAccountsComparator;
+import me.kodysimpson.littybank.utils.Serializer;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.sql.*;
@@ -38,8 +42,10 @@ public class Database {
 
             //Create the desired tables for our database if they don't exist
             Statement statement = getConnection().createStatement();
-            //Table for storing all of the locks
+            //Table for storing all of the accounts
             statement.execute("CREATE TABLE IF NOT EXISTS SavingsAccounts(AccountID int NOT NULL IDENTITY(1, 1), AccountTier varchar(255), OwnerUUID varchar(255), Balance DECIMAL(30,3), LastUpdated DATE, LastChecked DATE);");
+            //Table for storing all ATMs
+            statement.execute("CREATE TABLE IF NOT EXISTS ATM(Owner varchar(255), Location varchar(255));");
 
             System.out.println("Database loaded");
 
@@ -228,6 +234,87 @@ public class Database {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+    }
+
+
+
+
+
+
+
+    // ------------------------------------ < ATM STUFF > -----------------------------------------------
+
+
+    public static void addATM(ATM atm) {
+
+        String uuid = atm.getOwner().getUniqueId().toString();
+        Location location = atm.getLocation();
+
+        try {
+            PreparedStatement statement = getConnection().prepareStatement("INSERT INTO ATM(Owner, Location) VALUES (?, ?);");
+            statement.setString(1, uuid);
+            statement.setString(2, Serializer.serializeLocation(location));
+
+            statement.execute();
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+    }
+
+    public static boolean isATMLocation(Location location) {
+
+        try {
+            PreparedStatement statement = getConnection().prepareStatement("SELECT COUNT(Location) FROM ATM WHERE Location = ?;");
+            statement.setString(1, Serializer.serializeLocation(location));
+
+            ResultSet result = statement.executeQuery();
+            result.next();
+
+            return result.getInt(1) > 0;
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public static void deleteATM(ATM atm) {
+
+        Location location = atm.getLocation();
+
+        try {
+            PreparedStatement statement = getConnection().prepareStatement("DELETE FROM ATM WHERE Location = ?;");
+            statement.setString(1, Serializer.serializeLocation(location));
+
+            statement.execute();
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public static ATM getATM(Location location) {
+
+        try {
+
+            PreparedStatement statement = getConnection().prepareStatement("SELECT Owner FROM ATM WHERE Location = ?");
+            statement.setString(1, Serializer.serializeLocation(location));
+
+            ResultSet result = statement.executeQuery();
+            result.next();
+
+            Player player = Bukkit.getPlayer(UUID.fromString(result.getString(1)));
+            return new ATM(player, location);
+
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return null;
     }
 
 }

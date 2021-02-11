@@ -3,6 +3,7 @@ package me.kodysimpson.littybank.menu;
 import me.kodysimpson.littybank.models.AccountTier;
 import me.kodysimpson.littybank.models.SavingsAccount;
 import me.kodysimpson.simpapi.menu.AbstractPlayerMenuUtility;
+import me.kodysimpson.simpapi.menu.Menu;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -10,8 +11,17 @@ import org.bukkit.inventory.ItemStack;
 public class PlayerMenuUtility extends AbstractPlayerMenuUtility {
 
     private Location atmLocation;
-    private AccountTier tier;
+    private ItemStack tierItem;
     private String accountName;
+    private Menu lastMenu;
+
+    public Menu getLastMenu() {
+        return lastMenu;
+    }
+
+    public void setLastMenu(Menu lastMenu) {
+        this.lastMenu = lastMenu;
+    }
 
     public PlayerMenuUtility(Player p) {
         super(p);
@@ -25,12 +35,12 @@ public class PlayerMenuUtility extends AbstractPlayerMenuUtility {
         this.atmLocation = atmLocation;
     }
 
-    public AccountTier getTier() {
-        return tier;
+    public ItemStack getTierItem() {
+        return tierItem;
     }
 
-    public void setTier(AccountTier tier) {
-        this.tier = tier;
+    public void setTierItem(ItemStack tierItem) {
+        this.tierItem = tierItem;
     }
 
     public String getAccountName() {

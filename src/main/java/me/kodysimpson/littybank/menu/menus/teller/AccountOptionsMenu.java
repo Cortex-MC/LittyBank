@@ -4,6 +4,8 @@ import me.kodysimpson.littybank.Database;
 import me.kodysimpson.littybank.LittyBank;
 import me.kodysimpson.littybank.menu.PlayerMenuUtility;
 import me.kodysimpson.littybank.models.BankNote;
+import me.kodysimpson.littybank.utils.MessageUtils;
+import me.kodysimpson.simpapi.colors.ColorTranslator;
 import me.kodysimpson.simpapi.exceptions.MenuManagerException;
 import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
 import me.kodysimpson.simpapi.menu.AbstractPlayerMenuUtility;
@@ -84,10 +86,13 @@ public class AccountOptionsMenu extends Menu {
 
     @Override
     public void setMenuItems() {
-        ItemStack withdraw = makeItem(Material.GREEN_CONCRETE, "Withdraw");
-        ItemStack deposit = makeItem(Material.BLUE_CONCRETE, "Deposit");
-        ItemStack delete = makeItem(Material.TOTEM_OF_UNDYING, "Delete Account");
-        ItemStack back = makeItem(Material.BARRIER, "Back");
+        ItemStack withdraw = makeItem(Material.GREEN_CONCRETE, ColorTranslator.translateColorCodes("&#23eb17&lWithdraw"),
+                ColorTranslator.translateColorCodes("&7Withdraw money from this"), ColorTranslator.translateColorCodes("&7account to your balance."));
+        ItemStack deposit = makeItem(Material.BLUE_CONCRETE, ColorTranslator.translateColorCodes("&#6e54e3&lDeposit"),
+                ColorTranslator.translateColorCodes("&7Deposit money from your"), ColorTranslator.translateColorCodes("&7balance to this account."));
+        ItemStack delete = makeItem(Material.TOTEM_OF_UNDYING, ColorTranslator.translateColorCodes("&#e35954&lDelete Account"),
+                ColorTranslator.translateColorCodes("&7Permanently delete this account."), ColorTranslator.translateColorCodes("&7Available balance will be"), ColorTranslator.translateColorCodes("&7deposited to your balance."));
+        ItemStack back = makeItem(Material.BARRIER, ColorTranslator.translateColorCodes("&4&lBack"));
 
         inventory.setItem(0, withdraw);
         inventory.setItem(2, deposit);
@@ -103,12 +108,12 @@ public class AccountOptionsMenu extends Menu {
 
             Database.deleteAccount(id);
 
-            player.sendMessage("Your account has been successfully deleted and $" + balance + " has been added to your balance.\n" +
-                    "Will add a confirmation menu later");
+            player.sendMessage(MessageUtils.message("Your account has been successfully deleted and $" + balance + " has been added to your balance.\n" +
+                    "Will add a confirmation menu later"));
 
         }else{
 
-            player.sendMessage("Transaction Error. Try again later.");
+            player.sendMessage(MessageUtils.message("Transaction Error. Try again later."));
 
         }
     }
@@ -123,13 +128,13 @@ public class AccountOptionsMenu extends Menu {
 
                     if (balance >= amount) return true;
 
-                    player.sendMessage("Not enough balance in bank");
+                    player.sendMessage(MessageUtils.message("Not enough balance in bank"));
                     return false;
 
                 }
                 catch (NumberFormatException exception) {
                     if (s.equalsIgnoreCase("cancel")) return true;
-                    player.sendMessage("Please enter a valid amount");
+                    player.sendMessage(MessageUtils.message("Please enter a valid amount"));
                     return false;
                 }
             }
@@ -137,7 +142,7 @@ public class AccountOptionsMenu extends Menu {
             @Override
             protected Prompt acceptValidatedInput(ConversationContext context, String s) {
                 if (s.equalsIgnoreCase("cancel")) {
-                    player.sendMessage("Transaction has been cancelled");
+                    player.sendMessage(MessageUtils.message("Transaction has been cancelled"));
                 }else withdrawMoney(Double.parseDouble(s));
                 BankNote.removePlayerInConversation(player);
                 return Prompt.END_OF_CONVERSATION;
@@ -145,7 +150,7 @@ public class AccountOptionsMenu extends Menu {
 
             @Override
             public String getPromptText(ConversationContext context) {
-                return "\nEnter the amount to withdraw (Type \"cancel\" to cancel)";
+                return MessageUtils.message("Enter the amount to withdraw (Type \"cancel\" to cancel)");
             }
         };
 
@@ -161,10 +166,10 @@ public class AccountOptionsMenu extends Menu {
     public void withdrawMoney(double value) {
         ItemStack note = BankNote.createBankNote(value);
 
-        if (player.getInventory().addItem(note).size() > 0) player.sendMessage("Transaction unsuccessful. No empty slot in inventory");
+        if (player.getInventory().addItem(note).size() > 0) player.sendMessage(MessageUtils.message("Transaction unsuccessful. No empty slot in inventory"));
         else {
             Database.setBalance(id, balance-value);
-            player.sendMessage("Successfully withdrawn a $" + value + " note from the bank");
+            player.sendMessage(MessageUtils.message("Successfully withdrawn a $" + value + " note from the bank"));
         }
 
     }
@@ -179,13 +184,13 @@ public class AccountOptionsMenu extends Menu {
 
                     if (economy.getBalance(player) >= amount) return true;
 
-                    player.sendMessage("You don't have enough money");
+                    player.sendMessage(MessageUtils.message("You don't have enough money"));
                     return false;
 
                 }
                 catch (NumberFormatException exception) {
                     if (s.equalsIgnoreCase("cancel")) return true;
-                    player.sendMessage("Please enter a valid amount");
+                    player.sendMessage(MessageUtils.message("Please enter a valid amount"));
                     return false;
                 }
             }
@@ -193,7 +198,7 @@ public class AccountOptionsMenu extends Menu {
             @Override
             protected Prompt acceptValidatedInput(ConversationContext context, String s) {
                 if (s.equalsIgnoreCase("cancel")) {
-                    player.sendMessage("Transaction has been cancelled");
+                    player.sendMessage(MessageUtils.message("Transaction has been cancelled"));
                 }else depositMoney(Double.parseDouble(s));
                 BankNote.removePlayerInConversation(player);
                 return Prompt.END_OF_CONVERSATION;
@@ -201,7 +206,7 @@ public class AccountOptionsMenu extends Menu {
 
             @Override
             public String getPromptText(ConversationContext context) {
-                return "\nEnter the amount to withdraw (Type \"cancel\" to cancel)";
+                return MessageUtils.message("Enter the amount to withdraw (Type \"cancel\" to cancel)");
             }
         };
 
@@ -222,11 +227,11 @@ public class AccountOptionsMenu extends Menu {
 
             Database.setBalance(id, balance + value);
 
-            player.sendMessage("Successfully deposited $" + value + " in the bank");
+            player.sendMessage(MessageUtils.message("Successfully deposited $" + value + " in the bank"));
 
         }else{
 
-            player.sendMessage("Transaction Error. Try again later.");
+            player.sendMessage(MessageUtils.message("Transaction Error. Try again later."));
 
         }
 

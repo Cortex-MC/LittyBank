@@ -3,6 +3,7 @@ package me.kodysimpson.littybank.listeners;
 import me.kodysimpson.littybank.LittyBank;
 import me.kodysimpson.littybank.menu.menus.teller.TellerMenu;
 import me.kodysimpson.littybank.models.BankNote;
+import me.kodysimpson.littybank.utils.MessageUtils;
 import me.kodysimpson.simpapi.exceptions.MenuManagerException;
 import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
 import me.kodysimpson.simpapi.menu.MenuManager;
@@ -24,7 +25,7 @@ public class BankTellerListener implements Listener {
     @EventHandler
     public void onEntityInteract(NPCRightClickEvent e) throws MenuManagerNotSetupException, MenuManagerException {
 
-        // add NPC is Bank Teller check here
+        // add NPC is bank teller check here
 
         if (BankNote.isPlayerInConversation(e.getClicker())) return;
 
@@ -58,11 +59,11 @@ public class BankTellerListener implements Listener {
 
                 slots.forEach(i -> player.getInventory().setItem(i, new ItemStack(Material.AIR)));
 
-                player.sendMessage("You have successfully redeemed $" + value);
+                player.sendMessage(MessageUtils.message("You have successfully redeemed $" + value));
 
             }else{
 
-                player.sendMessage("Transaction Error. Try again later.");
+                player.sendMessage(MessageUtils.message("Transaction Error. Try again later."));
 
             }
             return;
@@ -81,11 +82,11 @@ public class BankTellerListener implements Listener {
                 player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
             }
 
-            player.sendMessage("You have successfully redeemed $" + value);
+            player.sendMessage(MessageUtils.message("You have successfully redeemed $" + value));
 
         }else{
 
-            player.sendMessage("Transaction Error. Try again later.");
+            player.sendMessage(MessageUtils.message("Transaction Error. Try again later."));
 
         }
 

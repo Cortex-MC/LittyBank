@@ -3,6 +3,8 @@ package me.kodysimpson.littybank.menu.menus.teller;
 import me.kodysimpson.littybank.LittyBank;
 import me.kodysimpson.littybank.menu.PlayerMenuUtility;
 import me.kodysimpson.littybank.models.BankNote;
+import me.kodysimpson.littybank.utils.MessageUtils;
+import me.kodysimpson.simpapi.colors.ColorTranslator;
 import me.kodysimpson.simpapi.exceptions.MenuManagerException;
 import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
 import me.kodysimpson.simpapi.menu.AbstractPlayerMenuUtility;
@@ -48,7 +50,7 @@ public class TellerMenu extends Menu {
 
         PlayerMenuUtility playerMenuUtility = PMUCaster(pmu, PlayerMenuUtility.class);
 
-        if (e.getCurrentItem().getType() == Material.PAPER){
+        if (e.getCurrentItem().getType() == Material.SNOW_BLOCK){
 
             MenuManager.openMenu(SavingsMainMenu.class, pmu);
 
@@ -56,7 +58,7 @@ public class TellerMenu extends Menu {
 
             MenuManager.openMenu(PurchaseATMMenu.class, pmu);
 
-        }else if (e.getCurrentItem().getType() == Material.WRITTEN_BOOK) {
+        }else if (e.getCurrentItem().getType() == Material.PAPER) {
 
             playerMenuUtility.getOwner().closeInventory();
             bankNoteConversation(playerMenuUtility.getOwner());
@@ -72,18 +74,21 @@ public class TellerMenu extends Menu {
     @Override
     public void setMenuItems() {
 
-        ItemStack savings = makeItem(Material.PAPER, "Savings Accounts");
+        ItemStack savings = makeItem(Material.SNOW_BLOCK, ColorTranslator.translateColorCodes("&#818de3&lSavings Accounts"),
+                ColorTranslator.translateColorCodes("&7Create and manage"), ColorTranslator.translateColorCodes("&7your savings accounts."));
 
-        ItemStack bankNotes = makeItem(Material.WRITTEN_BOOK, "Bank Notes");
+        ItemStack bankNotes = makeItem(Material.PAPER, ColorTranslator.translateColorCodes("&#66de2a&lBank Notes"),
+                ColorTranslator.translateColorCodes("&7Convert your money to"), ColorTranslator.translateColorCodes("&7bank notes."));
 
-        ItemStack ATM = makeItem(Material.ANVIL, "Purchase ATM");
+        ItemStack ATM = makeItem(Material.ANVIL, ColorTranslator.translateColorCodes("&#f261b6&lPurchase ATM"),
+                ColorTranslator.translateColorCodes("&7Get your very own portable"), ColorTranslator.translateColorCodes("&7ATM for easy access to your"), ColorTranslator.translateColorCodes("&7savings accounts."));
 
-        ItemStack close = makeItem(Material.BARRIER, "Close");
+        ItemStack close = makeItem(Material.BARRIER, ColorTranslator.translateColorCodes("&4&lClose"));
 
         inventory.setItem(11, savings);
         inventory.setItem(13, bankNotes);
         inventory.setItem(15, ATM);
-        inventory.setItem(26, close);
+        inventory.setItem(22, close);
         setFillerGlass();
 
     }
@@ -96,7 +101,7 @@ public class TellerMenu extends Menu {
                 try { Double.parseDouble(s); return true; }
                 catch (NumberFormatException exception) {
                     if (s.equalsIgnoreCase("cancel")) return true;
-                    player.sendMessage("Please enter a valid amount");
+                    player.sendMessage(MessageUtils.message("Please enter a valid amount"));
                     return false;
                 }
             }
@@ -104,7 +109,7 @@ public class TellerMenu extends Menu {
             @Override
             protected Prompt acceptValidatedInput(ConversationContext context, String s) {
                 if (s.equalsIgnoreCase("cancel")) {
-                    player.sendMessage("Transaction has been cancelled");
+                    player.sendMessage(MessageUtils.message("Transaction has been cancelled"));
                 }else withdrawMoney(Double.parseDouble(s), player);
                 BankNote.removePlayerInConversation(player);
                 return Prompt.END_OF_CONVERSATION;
@@ -112,7 +117,7 @@ public class TellerMenu extends Menu {
 
             @Override
             public String getPromptText(ConversationContext context) {
-                return "\nEnter the amount to withdraw (Type \"cancel\" to cancel)";
+                return MessageUtils.message("Enter the amount to withdraw (Type \"cancel\" to cancel)");
             }
         };
 
@@ -138,17 +143,17 @@ public class TellerMenu extends Menu {
                 ItemStack ATM = BankNote.createBankNote(value);
 
                 player.getInventory().addItem(ATM);
-                player.sendMessage("A bank note of $" + value + " has been added to your inventory.");
+                player.sendMessage(MessageUtils.message("A bank note of $" + value + " has been added to your inventory."));
 
             }else{
 
-                player.sendMessage("Transaction Error. Try again later.");
+                player.sendMessage(MessageUtils.message("Transaction Error. Try again later."));
 
             }
 
         }else{
 
-            player.sendMessage("You cant afford it you poor bitch.");
+            player.sendMessage(MessageUtils.message("You cant afford it you poor bitch."));
 
         }
     }
