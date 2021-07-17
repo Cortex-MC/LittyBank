@@ -2,15 +2,15 @@ package me.kodysimpson.littybank.menu.menus.teller;
 
 import me.kodysimpson.littybank.Database;
 import me.kodysimpson.littybank.LittyBank;
-import me.kodysimpson.littybank.menu.PlayerMenuUtility;
+import me.kodysimpson.littybank.menu.Data;
 import me.kodysimpson.littybank.models.BankNote;
 import me.kodysimpson.littybank.utils.MessageUtils;
 import me.kodysimpson.simpapi.colors.ColorTranslator;
 import me.kodysimpson.simpapi.exceptions.MenuManagerException;
 import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
-import me.kodysimpson.simpapi.menu.AbstractPlayerMenuUtility;
 import me.kodysimpson.simpapi.menu.Menu;
 import me.kodysimpson.simpapi.menu.MenuManager;
+import me.kodysimpson.simpapi.menu.PlayerMenuUtility;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Material;
@@ -25,16 +25,14 @@ import org.bukkit.inventory.ItemStack;
 public class AccountOptionsMenu extends Menu {
 
     private double balance;
-    private PlayerMenuUtility playerMenuUtility;
     private String accountName;
     private int id;
     private Economy economy;
     private Player player;
 
-    public AccountOptionsMenu(AbstractPlayerMenuUtility pmu) {
+    public AccountOptionsMenu(PlayerMenuUtility pmu) {
         super(pmu);
-        playerMenuUtility = PMUCaster(pmu, PlayerMenuUtility.class);
-        accountName = playerMenuUtility.getAccountName();
+        accountName = playerMenuUtility.getData(Data.ACCOUNT_NAME, String.class);
         id = Integer.parseInt(accountName.substring(accountName.indexOf("#")+1));
         balance = Database.getBalance(id);
         economy = LittyBank.getEconomy();
@@ -44,8 +42,7 @@ public class AccountOptionsMenu extends Menu {
 
     @Override
     public String getMenuName() {
-        PlayerMenuUtility playerMenuUtility = PMUCaster(pmu, PlayerMenuUtility.class);
-        return playerMenuUtility.getAccountName();
+        return this.accountName;
     }
 
     @Override

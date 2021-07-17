@@ -1,21 +1,21 @@
 package me.kodysimpson.littybank.menu.menus.teller;
 
-import me.kodysimpson.littybank.menu.PlayerMenuUtility;
+import me.kodysimpson.littybank.menu.Data;
 import me.kodysimpson.littybank.models.AccountTier;
 import me.kodysimpson.littybank.utils.AccountUtils;
 import me.kodysimpson.simpapi.colors.ColorTranslator;
 import me.kodysimpson.simpapi.exceptions.MenuManagerException;
 import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
-import me.kodysimpson.simpapi.menu.AbstractPlayerMenuUtility;
 import me.kodysimpson.simpapi.menu.Menu;
 import me.kodysimpson.simpapi.menu.MenuManager;
+import me.kodysimpson.simpapi.menu.PlayerMenuUtility;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class SavingsTierSelectionMenu extends Menu {
 
-    public SavingsTierSelectionMenu(AbstractPlayerMenuUtility playerMenuUtility) {
+    public SavingsTierSelectionMenu(PlayerMenuUtility playerMenuUtility) {
         super(playerMenuUtility);
     }
 
@@ -37,11 +37,9 @@ public class SavingsTierSelectionMenu extends Menu {
     @Override
     public void handleMenu(InventoryClickEvent e) throws MenuManagerNotSetupException, MenuManagerException {
 
-        PlayerMenuUtility playerMenuUtility = PMUCaster(pmu, PlayerMenuUtility.class);
-
         if (AccountTier.isValidTier(e.getCurrentItem())){
 
-            playerMenuUtility.setTierItem(e.getCurrentItem());
+            playerMenuUtility.setData(Data.TIER_ITEM, e.getCurrentItem());
             MenuManager.openMenu(ConfirmOpenAccountMenu.class, playerMenuUtility.getOwner());
 
         }else if (e.getCurrentItem().getType() == Material.BARRIER){

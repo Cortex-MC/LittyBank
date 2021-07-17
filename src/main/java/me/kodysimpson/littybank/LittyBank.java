@@ -3,7 +3,6 @@ package me.kodysimpson.littybank;
 import me.kodysimpson.littybank.commands.CreateTellerCommand;
 import me.kodysimpson.littybank.listeners.ATMListener;
 import me.kodysimpson.littybank.listeners.BankTellerListener;
-import me.kodysimpson.littybank.menu.PlayerMenuUtility;
 import me.kodysimpson.littybank.tasks.InterestTask;
 import me.kodysimpson.simpapi.command.CommandManager;
 import me.kodysimpson.simpapi.menu.MenuManager;
@@ -56,10 +55,10 @@ public final class LittyBank extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new BankTellerListener(), this);
         getServer().getPluginManager().registerEvents(new ATMListener(), this);
 
-        MenuManager.setup(getServer(), this, PlayerMenuUtility.class);
+        MenuManager.setup(getServer(), this);
 
         try {
-            CommandManager.createCoreCommand(this, "litty", "litty bank core", "/litty", Arrays.asList("pickle"),  CreateTellerCommand.class);
+            CommandManager.createCoreCommand(this, "litty", "litty bank core", "/litty", null, Arrays.asList("pickle"),  CreateTellerCommand.class);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }

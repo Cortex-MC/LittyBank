@@ -2,18 +2,17 @@ package me.kodysimpson.littybank.menu.atm;
 
 import me.kodysimpson.littybank.Database;
 import me.kodysimpson.littybank.LittyBank;
-import me.kodysimpson.littybank.menu.PlayerMenuUtility;
+import me.kodysimpson.littybank.menu.Data;
 import me.kodysimpson.littybank.menu.menus.teller.SavingsAccountsMenu;
 import me.kodysimpson.littybank.models.ATM;
 import me.kodysimpson.littybank.utils.MessageUtils;
 import me.kodysimpson.simpapi.colors.ColorTranslator;
 import me.kodysimpson.simpapi.exceptions.MenuManagerException;
 import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
-import me.kodysimpson.simpapi.menu.AbstractPlayerMenuUtility;
 import me.kodysimpson.simpapi.menu.Menu;
 import me.kodysimpson.simpapi.menu.MenuManager;
+import me.kodysimpson.simpapi.menu.PlayerMenuUtility;
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -24,7 +23,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class ATMMenu extends Menu {
 
-    public ATMMenu(AbstractPlayerMenuUtility playerMenuUtility) {
+    public ATMMenu(PlayerMenuUtility playerMenuUtility) {
         super(playerMenuUtility);
     }
 
@@ -46,8 +45,6 @@ public class ATMMenu extends Menu {
     @Override
     public void handleMenu(InventoryClickEvent e) throws MenuManagerNotSetupException, MenuManagerException {
 
-        PlayerMenuUtility playerMenuUtility = (PlayerMenuUtility) pmu;
-
         if (e.getCurrentItem().getType() == Material.BARRIER){
 
             playerMenuUtility.getOwner().closeInventory();
@@ -59,18 +56,17 @@ public class ATMMenu extends Menu {
 
         }else if (e.getCurrentItem().getType() == Material.PAPER){
 
-            if (Database.getAccounts(pmu.getOwner()).isEmpty()) {
-                pmu.getOwner().closeInventory();
-                pmu.getOwner().sendMessage(MessageUtils.message("You don't have any open savings accounts."));
+            if (Database.getAccounts(playerMenuUtility.getOwner()).isEmpty()) {
+                playerMenuUtility.getOwner().closeInventory();
+                playerMenuUtility.getOwner().sendMessage(MessageUtils.message("You don't have any open savings accounts."));
                 return;
             }
 
-            playerMenuUtility.setLastMenu(this);
-            MenuManager.openMenu(SavingsAccountsMenu.class, pmu.getOwner());
+            MenuManager.openMenu(SavingsAccountsMenu.class, playerMenuUtility.getOwner());
 
         }else if (e.getCurrentItem().getType() == Material.QUARTZ_BLOCK) {
 
-            pickUpATM(playerMenuUtility.getOwner(), playerMenuUtility.getAtmLocation());
+            pickUpATM(playerMenuUtility.getOwner(), playerMenuUtility.getData(Data.ATM_LOCATION, Location.class));
             playerMenuUtility.getOwner().closeInventory();
         }
 
@@ -80,11 +76,8 @@ public class ATMMenu extends Menu {
     public void setMenuItems() {
 
         ItemStack pickup = makeItem(Material.QUARTZ_BLOCK, ColorTranslator.translateColorCodes("&4&lPick up"));
-
         ItemStack close = makeItem(Material.BARRIER, ColorTranslator.translateColorCodes("&4&lClose"));
-
         ItemStack balance = makeItem(Material.BIRCH_SIGN, ColorTranslator.translateColorCodes("&a&lCheck Balance"));
-
         ItemStack withdraw = makeItem(Material.PAPER, ColorTranslator.translateColorCodes("&#bd883e&lManage Savings Accounts"));
 
         inventory.setItem(0, pickup);
@@ -95,7 +88,6 @@ public class ATMMenu extends Menu {
     }
 
     public void displayBalance(Player player) {
-        PlayerMenuUtility playerMenuUtility = (PlayerMenuUtility) pmu;
 
         Economy economy = LittyBank.getEconomy();
         double balance = economy.getBalance(player);
@@ -106,7 +98,7 @@ public class ATMMenu extends Menu {
         balanceH.setCustomName("Checking Balance: $" + balance);
         balanceH.setVisible(false);
         balanceH.setInvulnerable(true);
-        balanceH.teleport(playerMenuUtility.getAtmLocation().add(0.5, -0.25, 0.5));
+        balanceH.teleport(playerMenuUtility.getData(Data.ATM_LOCATION, Location.class).add(0.5, -0.25, 0.5));
     }
 
     public void pickUpATM(Player currentPlayer, Location atmLocation) {

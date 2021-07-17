@@ -1,15 +1,16 @@
 package me.kodysimpson.littybank.menu.menus.teller;
 
 import me.kodysimpson.littybank.LittyBank;
-import me.kodysimpson.littybank.menu.PlayerMenuUtility;
 import me.kodysimpson.littybank.models.ATM;
 import me.kodysimpson.littybank.utils.MessageUtils;
 import me.kodysimpson.simpapi.colors.ColorTranslator;
-import me.kodysimpson.simpapi.menu.AbstractPlayerMenuUtility;
+import me.kodysimpson.simpapi.exceptions.MenuManagerException;
+import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
 import me.kodysimpson.simpapi.menu.Menu;
+import me.kodysimpson.simpapi.menu.MenuManager;
+import me.kodysimpson.simpapi.menu.PlayerMenuUtility;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -17,7 +18,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class PurchaseATMMenu extends Menu {
 
-    public PurchaseATMMenu(AbstractPlayerMenuUtility playerMenuUtility) {
+    public PurchaseATMMenu(PlayerMenuUtility playerMenuUtility) {
         super(playerMenuUtility);
     }
 
@@ -37,12 +38,10 @@ public class PurchaseATMMenu extends Menu {
     }
 
     @Override
-    public void handleMenu(InventoryClickEvent e) {
-
-        PlayerMenuUtility playerMenuUtility = PMUCaster(pmu, PlayerMenuUtility.class);
+    public void handleMenu(InventoryClickEvent e) throws MenuManagerException, MenuManagerNotSetupException {
 
         if (e.getCurrentItem().getType() == Material.BARRIER){
-            new TellerMenu(playerMenuUtility).open();
+            MenuManager.openMenu(TellerMenu.class, playerMenuUtility.getOwner());
         }else if (e.getCurrentItem().getType() == Material.BELL){
 
             purchaseATM(playerMenuUtility.getOwner());

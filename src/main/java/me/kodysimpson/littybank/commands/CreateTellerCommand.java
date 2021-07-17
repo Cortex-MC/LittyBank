@@ -10,10 +10,14 @@ import java.util.List;
 
 public class CreateTellerCommand extends SubCommand {
 
-
     @Override
     public String getName() {
         return "spawnteller";
+    }
+
+    @Override
+    public List<String> getAliases() {
+        return null;
     }
 
     @Override

@@ -1,13 +1,14 @@
 package me.kodysimpson.littybank.listeners;
 
 import me.kodysimpson.littybank.Database;
-import me.kodysimpson.littybank.menu.PlayerMenuUtility;
+import me.kodysimpson.littybank.menu.Data;
 import me.kodysimpson.littybank.menu.atm.ATMMenu;
 import me.kodysimpson.littybank.models.ATM;
 import me.kodysimpson.littybank.utils.MessageUtils;
 import me.kodysimpson.simpapi.exceptions.MenuManagerException;
 import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
 import me.kodysimpson.simpapi.menu.MenuManager;
+import me.kodysimpson.simpapi.menu.PlayerMenuUtility;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,8 +27,8 @@ public class ATMListener implements Listener {
             if (!Database.isATMLocation(e.getClickedBlock().getLocation())) return;
             e.setCancelled(true);
 
-            PlayerMenuUtility playerMenuUtility = MenuManager.getPlayerMenuUtility(e.getPlayer(), PlayerMenuUtility.class);
-            playerMenuUtility.setAtmLocation(e.getClickedBlock().getLocation());
+            PlayerMenuUtility playerMenuUtility = MenuManager.getPlayerMenuUtility(e.getPlayer());
+            playerMenuUtility.setData(Data.ATM_LOCATION, e.getClickedBlock().getLocation());
 
             MenuManager.openMenu(ATMMenu.class, e.getPlayer());
         }

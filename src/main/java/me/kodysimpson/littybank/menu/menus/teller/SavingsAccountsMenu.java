@@ -1,15 +1,15 @@
 package me.kodysimpson.littybank.menu.menus.teller;
 
 import me.kodysimpson.littybank.Database;
-import me.kodysimpson.littybank.menu.PlayerMenuUtility;
+import me.kodysimpson.littybank.menu.Data;
 import me.kodysimpson.littybank.models.BankNote;
 import me.kodysimpson.littybank.models.SavingsAccount;
 import me.kodysimpson.simpapi.colors.ColorTranslator;
 import me.kodysimpson.simpapi.exceptions.MenuManagerException;
 import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
-import me.kodysimpson.simpapi.menu.AbstractPlayerMenuUtility;
 import me.kodysimpson.simpapi.menu.Menu;
 import me.kodysimpson.simpapi.menu.MenuManager;
+import me.kodysimpson.simpapi.menu.PlayerMenuUtility;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -17,8 +17,9 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public class SavingsAccountsMenu extends Menu {
-    public SavingsAccountsMenu(AbstractPlayerMenuUtility pmu) {
-        super(pmu);
+
+    public SavingsAccountsMenu(PlayerMenuUtility playerMenuUtility) {
+        super(playerMenuUtility);
     }
 
     @Override
@@ -39,22 +40,20 @@ public class SavingsAccountsMenu extends Menu {
     @Override
     public void handleMenu(InventoryClickEvent e) throws MenuManagerNotSetupException, MenuManagerException {
 
-        PlayerMenuUtility playerMenuUtility = PMUCaster(pmu, PlayerMenuUtility.class);
-
         if (e.getCurrentItem().getType() == Material.BARRIER) {
 
-            MenuManager.openMenu(playerMenuUtility.getLastMenu().getClass(), pmu.getOwner());
+            back();
 
         }else if (SavingsAccount.isValidAccount(e.getCurrentItem())) {
 
-            playerMenuUtility.setAccountName(e.getCurrentItem().getItemMeta().getDisplayName());
-            MenuManager.openMenu(AccountOptionsMenu.class, pmu.getOwner());
+            playerMenuUtility.setData(Data.ACCOUNT_NAME, e.getCurrentItem().getItemMeta().getDisplayName());
+            MenuManager.openMenu(AccountOptionsMenu.class, playerMenuUtility.getOwner());
         }
     }
 
     @Override
     public void setMenuItems() {
-        List<SavingsAccount> accounts = Database.getAccounts(pmu.getOwner());
+        List<SavingsAccount> accounts = Database.getAccounts(playerMenuUtility.getOwner());
 
         accounts.forEach(account -> {
             ItemStack item = makeItem(account.getTier().getAsMaterial(),

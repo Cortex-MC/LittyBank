@@ -2,15 +2,15 @@ package me.kodysimpson.littybank.menu.menus.teller;
 
 import me.kodysimpson.littybank.Database;
 import me.kodysimpson.littybank.LittyBank;
-import me.kodysimpson.littybank.menu.PlayerMenuUtility;
+import me.kodysimpson.littybank.menu.Data;
 import me.kodysimpson.littybank.models.AccountTier;
 import me.kodysimpson.littybank.models.SavingsAccount;
 import me.kodysimpson.littybank.utils.MessageUtils;
 import me.kodysimpson.simpapi.exceptions.MenuManagerException;
 import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
-import me.kodysimpson.simpapi.menu.AbstractPlayerMenuUtility;
 import me.kodysimpson.simpapi.menu.Menu;
 import me.kodysimpson.simpapi.menu.MenuManager;
+import me.kodysimpson.simpapi.menu.PlayerMenuUtility;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Material;
@@ -20,7 +20,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class ConfirmOpenAccountMenu extends Menu {
 
-    public ConfirmOpenAccountMenu(AbstractPlayerMenuUtility playerMenuUtility) {
+    public ConfirmOpenAccountMenu(PlayerMenuUtility playerMenuUtility) {
         super(playerMenuUtility);
     }
 
@@ -45,13 +45,13 @@ public class ConfirmOpenAccountMenu extends Menu {
 
         if (e.getCurrentItem().getType() == Material.BELL){
 
-            openAccount(AccountTier.matchTier(e.getInventory().getItem(0).getType()), pmu.getOwner());
-            pmu.getOwner().closeInventory();
+            openAccount(AccountTier.matchTier(e.getInventory().getItem(0).getType()), playerMenuUtility.getOwner());
+            playerMenuUtility.getOwner().closeInventory();
 
         }else if (e.getCurrentItem().getType() == Material.BARRIER){
 
             //go back
-            MenuManager.openMenu(SavingsTierSelectionMenu.class, pmu.getOwner());
+            MenuManager.openMenu(SavingsTierSelectionMenu.class, playerMenuUtility.getOwner());
 
         }
 
@@ -59,11 +59,10 @@ public class ConfirmOpenAccountMenu extends Menu {
 
     @Override
     public void setMenuItems() {
-        PlayerMenuUtility playerMenuUtility = PMUCaster(pmu, PlayerMenuUtility.class);
 
         ItemStack yes = makeItem(Material.BELL, "Yes");
         ItemStack no = makeItem(Material.BARRIER, "No");
-        ItemStack tierItem = playerMenuUtility.getTierItem();
+        ItemStack tierItem = playerMenuUtility.getData(Data.TIER_ITEM, ItemStack.class);
 
 
         inventory.setItem(0, tierItem);
