@@ -1,9 +1,10 @@
 package me.kodysimpson.littybank.menu.menus.teller;
 
-import me.kodysimpson.littybank.Database;
+import me.kodysimpson.littybank.database.Database;
 import me.kodysimpson.littybank.LittyBank;
-import me.kodysimpson.littybank.menu.Data;
+import me.kodysimpson.littybank.menu.MenuData;
 import me.kodysimpson.littybank.models.BankNote;
+import me.kodysimpson.littybank.models.SavingsAccount;
 import me.kodysimpson.littybank.utils.MessageUtils;
 import me.kodysimpson.simpapi.colors.ColorTranslator;
 import me.kodysimpson.simpapi.exceptions.MenuManagerException;
@@ -22,27 +23,23 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.sql.SQLException;
+
 public class AccountOptionsMenu extends Menu {
 
-    private double balance;
-    private String accountName;
-    private int id;
-    private Economy economy;
-    private Player player;
+    private final SavingsAccount account;
+    private final Economy economy;
 
-    public AccountOptionsMenu(PlayerMenuUtility pmu) {
+    public AccountOptionsMenu(PlayerMenuUtility pmu) throws SQLException {
         super(pmu);
-        accountName = playerMenuUtility.getData(Data.ACCOUNT_NAME, String.class);
-        id = Integer.parseInt(accountName.substring(accountName.indexOf("#")+1));
-        balance = Database.getBalance(id);
+        account = Database.getSavingsAccountDao().queryForId(playerMenuUtility.getData(MenuData.ACCOUNT_ID, Integer.class));
         economy = LittyBank.getEconomy();
-        player = pmu.getOwner();
     }
 
 
     @Override
     public String getMenuName() {
-        return this.accountName;
+        return ColorTranslator.translateColorCodes("&#e64764&lAccount &#d42847" + SavingsAccount.formatId(this.account.getId()));
     }
 
     @Override
@@ -58,25 +55,20 @@ public class AccountOptionsMenu extends Menu {
     @Override
     public void handleMenu(InventoryClickEvent e) throws MenuManagerNotSetupException, MenuManagerException {
 
-        if (e.getCurrentItem().getType() == Material.TOTEM_OF_UNDYING) {
-
-            player.closeInventory();
-            deleteAccount();
-
-        }else if (e.getCurrentItem().getType() == Material.GREEN_CONCRETE) {
-
-            player.closeInventory();
-            startWithdrawConversation();
-
-        }else if (e.getCurrentItem().getType() == Material.BLUE_CONCRETE) {
-
-            player.closeInventory();
-            startDepositConversation();
-
-        }else if (e.getCurrentItem().getType() == Material.BARRIER) {
-
-            MenuManager.openMenu(SavingsAccountsMenu.class, player);
-
+        switch (e.getCurrentItem().getType()) {
+            case LAVA_BUCKET -> {
+                p.closeInventory();
+                MenuManager.openMenu(ConfirmDeleteMenu.class, p);
+            }
+            case GREEN_CONCRETE -> {
+                p.closeInventory();
+                startWithdrawConversation();
+            }
+            case BLUE_CONCRETE -> {
+                p.closeInventory();
+                startDepositConversation();
+            }
+            case BARRIER -> MenuManager.openMenu(AccountsListMenu.class, p);
         }
 
     }
@@ -87,35 +79,23 @@ public class AccountOptionsMenu extends Menu {
                 ColorTranslator.translateColorCodes("&7Withdraw money from this"), ColorTranslator.translateColorCodes("&7account to your balance."));
         ItemStack deposit = makeItem(Material.BLUE_CONCRETE, ColorTranslator.translateColorCodes("&#6e54e3&lDeposit"),
                 ColorTranslator.translateColorCodes("&7Deposit money from your"), ColorTranslator.translateColorCodes("&7balance to this account."));
-        ItemStack delete = makeItem(Material.TOTEM_OF_UNDYING, ColorTranslator.translateColorCodes("&#e35954&lDelete Account"),
+        ItemStack info = makeItem(Material.WRITABLE_BOOK, ColorTranslator.translateColorCodes("Information"));
+        ItemStack delete = makeItem(Material.LAVA_BUCKET, ColorTranslator.translateColorCodes("&#e35954&lDelete Account"),
                 ColorTranslator.translateColorCodes("&7Permanently delete this account."), ColorTranslator.translateColorCodes("&7Available balance will be"), ColorTranslator.translateColorCodes("&7deposited to your balance."));
         ItemStack back = makeItem(Material.BARRIER, ColorTranslator.translateColorCodes("&4&lBack"));
 
         inventory.setItem(0, withdraw);
         inventory.setItem(2, deposit);
-        inventory.setItem(5, delete);
+        inventory.setItem(4, info);
+        inventory.setItem(6, delete);
         inventory.setItem(8, back);
-    }
 
-    public void deleteAccount() {
-
-        EconomyResponse response = economy.depositPlayer(player, balance);
-
-        if (response.transactionSuccess()){
-
-            Database.deleteAccount(id);
-
-            player.sendMessage(MessageUtils.message("Your account has been successfully deleted and $" + balance + " has been added to your balance.\n" +
-                    "Will add a confirmation menu later"));
-
-        }else{
-
-            player.sendMessage(MessageUtils.message("Transaction Error. Try again later."));
-
-        }
+        setFillerGlass();
     }
 
     public void startWithdrawConversation() {
+
+        double balance = account.getBalance();
 
         Prompt enterAmount = new ValidatingPrompt() {
             @Override
@@ -125,13 +105,13 @@ public class AccountOptionsMenu extends Menu {
 
                     if (balance >= amount) return true;
 
-                    player.sendMessage(MessageUtils.message("Not enough balance in bank"));
+                    p.sendMessage(MessageUtils.message("Not enough balance in bank"));
                     return false;
 
                 }
                 catch (NumberFormatException exception) {
                     if (s.equalsIgnoreCase("cancel")) return true;
-                    player.sendMessage(MessageUtils.message("Please enter a valid amount"));
+                    p.sendMessage(MessageUtils.message("Please enter a valid amount"));
                     return false;
                 }
             }
@@ -139,9 +119,15 @@ public class AccountOptionsMenu extends Menu {
             @Override
             protected Prompt acceptValidatedInput(ConversationContext context, String s) {
                 if (s.equalsIgnoreCase("cancel")) {
-                    player.sendMessage(MessageUtils.message("Transaction has been cancelled"));
-                }else withdrawMoney(Double.parseDouble(s));
-                BankNote.removePlayerInConversation(player);
+                    p.sendMessage(MessageUtils.message("Transaction has been cancelled"));
+                }else {
+                    try {
+                        withdrawMoney(Double.parseDouble(s));
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+                BankNote.removePlayerInConversation(p);
                 return Prompt.END_OF_CONVERSATION;
             }
 
@@ -151,22 +137,25 @@ public class AccountOptionsMenu extends Menu {
             }
         };
 
-        BankNote.addPlayerInConversation(player);
+        BankNote.addPlayerInConversation(p);
         new ConversationFactory(LittyBank.getPlugin())
                 .withModality(false)
                 .withTimeout(15)
                 .withFirstPrompt(enterAmount)
-                .buildConversation(player)
+                .buildConversation(p)
                 .begin();
     }
 
-    public void withdrawMoney(double value) {
+    public void withdrawMoney(double value) throws SQLException {
         ItemStack note = BankNote.createBankNote(value);
 
-        if (player.getInventory().addItem(note).size() > 0) player.sendMessage(MessageUtils.message("Transaction unsuccessful. No empty slot in inventory"));
+        if (p.getInventory().addItem(note).size() > 0) p.sendMessage(MessageUtils.message("Transaction unsuccessful. No empty slot in inventory"));
         else {
-            Database.setBalance(id, balance-value);
-            player.sendMessage(MessageUtils.message("Successfully withdrawn a $" + value + " note from the bank"));
+
+            account.setBalance(account.getBalance() - value);
+            Database.getSavingsAccountDao().update(account);
+
+            p.sendMessage(MessageUtils.message("Successfully withdrawn a $" + value + " note from the bank"));
         }
 
     }
@@ -179,15 +168,15 @@ public class AccountOptionsMenu extends Menu {
                 try {
                     double amount = Double.parseDouble(s);
 
-                    if (economy.getBalance(player) >= amount) return true;
+                    if (economy.getBalance(p) >= amount) return true;
 
-                    player.sendMessage(MessageUtils.message("You don't have enough money"));
+                    p.sendMessage(MessageUtils.message("You don't have enough money"));
                     return false;
 
                 }
                 catch (NumberFormatException exception) {
                     if (s.equalsIgnoreCase("cancel")) return true;
-                    player.sendMessage(MessageUtils.message("Please enter a valid amount"));
+                    p.sendMessage(MessageUtils.message("Please enter a valid amount"));
                     return false;
                 }
             }
@@ -195,9 +184,15 @@ public class AccountOptionsMenu extends Menu {
             @Override
             protected Prompt acceptValidatedInput(ConversationContext context, String s) {
                 if (s.equalsIgnoreCase("cancel")) {
-                    player.sendMessage(MessageUtils.message("Transaction has been cancelled"));
-                }else depositMoney(Double.parseDouble(s));
-                BankNote.removePlayerInConversation(player);
+                    p.sendMessage(MessageUtils.message("Transaction has been cancelled"));
+                }else {
+                    try {
+                        depositMoney(Double.parseDouble(s));
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+                BankNote.removePlayerInConversation(p);
                 return Prompt.END_OF_CONVERSATION;
             }
 
@@ -207,28 +202,29 @@ public class AccountOptionsMenu extends Menu {
             }
         };
 
-        BankNote.addPlayerInConversation(player);
+        BankNote.addPlayerInConversation(p);
         new ConversationFactory(LittyBank.getPlugin())
                 .withModality(false)
                 .withTimeout(15)
                 .withFirstPrompt(enterAmount)
-                .buildConversation(player)
+                .buildConversation(p)
                 .begin();
     }
 
-    public void depositMoney(double value) {
+    public void depositMoney(double value) throws SQLException {
 
-        EconomyResponse response = economy.withdrawPlayer(player, value);
+        EconomyResponse response = economy.withdrawPlayer(p, value);
 
         if (response.transactionSuccess()){
 
-            Database.setBalance(id, balance + value);
+            account.setBalance(account.getBalance() + value);
+            Database.getSavingsAccountDao().update(account);
 
-            player.sendMessage(MessageUtils.message("Successfully deposited $" + value + " in the bank"));
+            p.sendMessage(MessageUtils.message("Successfully deposited $" + value + " in the bank"));
 
         }else{
 
-            player.sendMessage(MessageUtils.message("Transaction Error. Try again later."));
+            p.sendMessage(MessageUtils.message("Transaction Error. Try again later."));
 
         }
 

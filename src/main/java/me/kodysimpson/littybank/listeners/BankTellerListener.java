@@ -4,6 +4,7 @@ import me.kodysimpson.littybank.LittyBank;
 import me.kodysimpson.littybank.menu.menus.teller.TellerMenu;
 import me.kodysimpson.littybank.models.BankNote;
 import me.kodysimpson.littybank.utils.MessageUtils;
+import me.kodysimpson.simpapi.colors.ColorTranslator;
 import me.kodysimpson.simpapi.exceptions.MenuManagerException;
 import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
 import me.kodysimpson.simpapi.menu.MenuManager;
@@ -19,22 +20,22 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class BankTellerListener implements Listener {
 
     @EventHandler
     public void onEntityInteract(NPCRightClickEvent e) throws MenuManagerNotSetupException, MenuManagerException {
 
-        // add NPC is bank teller check here
+        if (e.getNPC().getName().equalsIgnoreCase(ColorTranslator.translateColorCodes("&e&lBank Teller"))) {
+            // add NPC is bank teller check here
+            if (BankNote.isPlayerInConversation(e.getClicker())) return;
 
-        if (BankNote.isPlayerInConversation(e.getClicker())) return;
+            ItemStack itemInHand = e.getClicker().getInventory().getItemInMainHand();
 
-        ItemStack itemInHand = e.getClicker().getInventory().getItemInMainHand();
-
-        if (itemInHand.hasItemMeta() && BankNote.isBankNote(itemInHand)) {
-            redeemBankNote(e.getClicker(), new BankNote(itemInHand).getValue(), itemInHand, e.getClicker().isSneaking());
-        }else{
-            new TellerMenu(MenuManager.getPlayerMenuUtility(e.getClicker())).open();
+            if (itemInHand.hasItemMeta() && BankNote.isBankNote(itemInHand)) {
+                redeemBankNote(e.getClicker(), new BankNote(itemInHand).getValue(), itemInHand, e.getClicker().isSneaking());
+            }else{
+                new TellerMenu(MenuManager.getPlayerMenuUtility(e.getClicker())).open();
+            }
         }
 
     }

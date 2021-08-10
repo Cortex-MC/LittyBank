@@ -1,6 +1,7 @@
 package me.kodysimpson.littybank;
 
 import me.kodysimpson.littybank.commands.CreateTellerCommand;
+import me.kodysimpson.littybank.database.Database;
 import me.kodysimpson.littybank.listeners.ATMListener;
 import me.kodysimpson.littybank.listeners.BankTellerListener;
 import me.kodysimpson.littybank.tasks.InterestTask;
@@ -10,6 +11,8 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,6 +27,13 @@ public final class LittyBank extends JavaPlugin {
 
     @Override
     public void onDisable() {
+
+        try {
+            Database.getConnectionSource().close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         log.info(String.format("[%s] Disabled Version %s", getDescription().getName(), getDescription().getVersion()));
     }
 

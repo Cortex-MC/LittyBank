@@ -33,7 +33,7 @@ public class TellerMenu extends Menu {
 
     @Override
     public int getSlots() {
-        return 27;
+        return 36;
     }
 
     @Override
@@ -82,7 +82,7 @@ public class TellerMenu extends Menu {
         inventory.setItem(11, savings);
         inventory.setItem(13, bankNotes);
         inventory.setItem(15, ATM);
-        inventory.setItem(22, close);
+        inventory.setItem(31, close);
         setFillerGlass();
 
     }

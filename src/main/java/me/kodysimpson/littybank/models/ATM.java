@@ -1,6 +1,8 @@
 package me.kodysimpson.littybank.models;
 
+import com.j256.ormlite.field.DatabaseField;
 import me.kodysimpson.littybank.LittyBank;
+import me.kodysimpson.littybank.utils.Serializer;
 import me.kodysimpson.simpapi.colors.ColorTranslator;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -17,34 +19,53 @@ import java.util.UUID;
 
 public class ATM {
 
-    private Player owner;
-    private Location location;
+    @DatabaseField(generatedId = true)
+    private int id;
 
-    public ATM(Player owner, Location location) {
-        this.owner = owner;
-        this.location = location;
+    @DatabaseField
+    private UUID owner;
+    @DatabaseField(width = 2048)
+    private String location;
+
+    public ATM(){
+
     }
 
-    public ATM(ItemStack item) {
+    public ATM(UUID owner, Location location) {
+        this.owner = owner;
+        this.location = Serializer.serializeLocation(location);
+    }
+
+    public ATM(ItemStack item, Location location) {
         PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
         String uuid = container.get(new NamespacedKey(LittyBank.getPlugin(), "ATMOwner"), PersistentDataType.STRING);
-        this.owner = Bukkit.getPlayer(UUID.fromString(uuid));
+        System.out.println("location string size: " + Serializer.serializeLocation(location).length());
+        this.location = Serializer.serializeLocation(location);
+        this.owner = UUID.fromString(uuid);
     }
 
-    public Player getOwner() {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public UUID getOwner() {
         return owner;
     }
 
-    public void setOwner(Player owner) {
+    public void setOwner(UUID owner) {
         this.owner = owner;
     }
 
     public Location getLocation() {
-        return location;
+        return Serializer.deserializeLocation(location);
     }
 
     public void setLocation(Location location) {
-        this.location = location;
+        this.location = Serializer.serializeLocation(location);
     }
 
     public static ItemStack createATM(Player player) {
@@ -71,18 +92,22 @@ public class ATM {
         return container.has(new NamespacedKey(LittyBank.getPlugin(), "ATMOwner"), PersistentDataType.STRING);
     }
 
+    public static boolean isValidATM(Block block) {
 
+        if (!(block.getState() instanceof TileState state)) return false;
 
-//    public static boolean isValidATM(Block block) {
-//
-//        if (!(block.getState() instanceof TileState)) return false;
-//
-//        TileState state = (TileState) block.getState();
-//
-//        PersistentDataContainer container = state.getPersistentDataContainer();
-//
-//        return container.has(new NamespacedKey(LittyBank.getPlugin(), "ATMOwner"), PersistentDataType.STRING);
-//    }
+        PersistentDataContainer container = state.getPersistentDataContainer();
+
+        return container.has(new NamespacedKey(LittyBank.getPlugin(), "atmid"), PersistentDataType.INTEGER);
+    }
+
+    public static int getIdFromBlock(Block block){
+        if (!(block.getState() instanceof TileState state)) return 0;
+
+        PersistentDataContainer container = state.getPersistentDataContainer();
+
+        return container.get(new NamespacedKey(LittyBank.getPlugin(), "atmid"), PersistentDataType.INTEGER);
+    }
 //
 //    public static void setPDC(Block block, Player player) {
 //        if (!(block.getState() instanceof TileState)) return;

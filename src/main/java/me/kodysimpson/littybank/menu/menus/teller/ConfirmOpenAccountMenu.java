@@ -1,8 +1,8 @@
 package me.kodysimpson.littybank.menu.menus.teller;
 
-import me.kodysimpson.littybank.Database;
+import me.kodysimpson.littybank.database.Database;
 import me.kodysimpson.littybank.LittyBank;
-import me.kodysimpson.littybank.menu.Data;
+import me.kodysimpson.littybank.menu.MenuData;
 import me.kodysimpson.littybank.models.AccountTier;
 import me.kodysimpson.littybank.models.SavingsAccount;
 import me.kodysimpson.littybank.utils.MessageUtils;
@@ -17,6 +17,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.sql.SQLException;
+import java.util.Date;
 
 public class ConfirmOpenAccountMenu extends Menu {
 
@@ -45,7 +48,11 @@ public class ConfirmOpenAccountMenu extends Menu {
 
         if (e.getCurrentItem().getType() == Material.BELL){
 
-            openAccount(AccountTier.matchTier(e.getInventory().getItem(0).getType()), playerMenuUtility.getOwner());
+            try {
+                openAccount(AccountTier.matchTier(e.getInventory().getItem(0).getType()), playerMenuUtility.getOwner());
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
             playerMenuUtility.getOwner().closeInventory();
 
         }else if (e.getCurrentItem().getType() == Material.BARRIER){
@@ -57,22 +64,7 @@ public class ConfirmOpenAccountMenu extends Menu {
 
     }
 
-    @Override
-    public void setMenuItems() {
-
-        ItemStack yes = makeItem(Material.BELL, "Yes");
-        ItemStack no = makeItem(Material.BARRIER, "No");
-        ItemStack tierItem = playerMenuUtility.getData(Data.TIER_ITEM, ItemStack.class);
-
-
-        inventory.setItem(0, tierItem);
-        inventory.setItem(3, no);
-        inventory.setItem(5, yes);
-
-        setFillerGlass();
-    }
-
-    public void openAccount(AccountTier tier, Player player) {
+    public void openAccount(AccountTier tier, Player player) throws SQLException {
 
         player.sendMessage(tier.getAsString());
         double fee = tier.getOpeningFee();
@@ -85,11 +77,13 @@ public class ConfirmOpenAccountMenu extends Menu {
             if (response.transactionSuccess()){
 
                 SavingsAccount account = new SavingsAccount();
-                account.setAccountOwner(player.getUniqueId());
+                account.setOwner(player.getUniqueId());
                 account.setTier(tier);
                 account.setBalance(0);
+                account.setLastChecked(new Date());
+                account.setLastUpdated(new Date());
 
-                Database.createAccount(account);
+                Database.getSavingsAccountDao().create(account);
 
                 player.sendMessage(MessageUtils.message("You have successfully opened a Savings Account."));
 
@@ -104,5 +98,20 @@ public class ConfirmOpenAccountMenu extends Menu {
             player.sendMessage(MessageUtils.message("You cant afford it you poor bitch."));
 
         }
+    }
+
+    @Override
+    public void setMenuItems() {
+
+        ItemStack yes = makeItem(Material.BELL, "Yes");
+        ItemStack no = makeItem(Material.BARRIER, "No");
+        ItemStack tierItem = playerMenuUtility.getData(MenuData.TIER_ITEM, ItemStack.class);
+
+
+        inventory.setItem(0, tierItem);
+        inventory.setItem(3, no);
+        inventory.setItem(5, yes);
+
+        setFillerGlass();
     }
 }

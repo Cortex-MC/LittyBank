@@ -1,6 +1,14 @@
 package me.kodysimpson.littybank.models;
 
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+import me.kodysimpson.littybank.LittyBank;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Date;
 import java.util.UUID;
@@ -8,23 +16,30 @@ import java.util.UUID;
 /**
  * Used to model a player "Savings account" to store money with interest
  */
+@DatabaseTable(tableName = "savingsaccounts")
 public class SavingsAccount {
 
     //database id, can serve also as bank account id shown in game
+    @DatabaseField(generatedId = true)
     private int id;
 
-    private UUID accountOwner;
+    @DatabaseField
+    private UUID owner;
+    @DatabaseField
     private AccountTier tier;
+    @DatabaseField
     private double balance;
 
+    @DatabaseField
     private Date lastUpdated;
+    @DatabaseField
     private Date lastChecked;
 
     public SavingsAccount() {}
 
-    public SavingsAccount(int id, UUID accountOwner, AccountTier tier, double balance, Date lastUpdated, Date lastChecked) {
+    public SavingsAccount(int id, UUID owner, AccountTier tier, double balance, Date lastUpdated, Date lastChecked) {
         this.id = id;
-        this.accountOwner = accountOwner;
+        this.owner = owner;
         this.tier = tier;
         this.balance = balance;
         this.lastUpdated = lastUpdated;
@@ -39,12 +54,12 @@ public class SavingsAccount {
         this.id = id;
     }
 
-    public UUID getAccountOwner() {
-        return accountOwner;
+    public UUID getOwner() {
+        return owner;
     }
 
-    public void setAccountOwner(UUID accountOwner) {
-        this.accountOwner = accountOwner;
+    public void setOwner(UUID owner) {
+        this.owner = owner;
     }
 
     public AccountTier getTier() {
@@ -85,9 +100,5 @@ public class SavingsAccount {
             stringID = "0" + stringID;
         }
         return "#" + stringID;
-    }
-
-    public static boolean isValidAccount(ItemStack item) {
-        return item.getItemMeta().getDisplayName().contains("Account");
     }
 }

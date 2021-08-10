@@ -18,8 +18,11 @@ import org.bukkit.inventory.ItemStack;
 
 public class PurchaseATMMenu extends Menu {
 
+    private double atmCost = 0;
+
     public PurchaseATMMenu(PlayerMenuUtility playerMenuUtility) {
         super(playerMenuUtility);
+        atmCost = LittyBank.getPlugin().getConfig().getDouble("atm-cost");
     }
 
     @Override
@@ -58,38 +61,36 @@ public class PurchaseATMMenu extends Menu {
 
         ItemStack info = makeItem(Material.ANVIL, ColorTranslator.translateColorCodes("&6&lATM"),
                 ColorTranslator.translateColorCodes("&7An ATM is a portable machine"),
-                ColorTranslator.translateColorCodes("&7you can withdraw money from."),
-                "\n&7Cost: &a$10000");
+                ColorTranslator.translateColorCodes("&7you can withdraw money from."), " ",
+                ColorTranslator.translateColorCodes("&7Cost: &a$" + atmCost));
 
-        ItemStack purchase = makeItem(Material.BELL, ColorTranslator.translateColorCodes("&#31d428&lPurchase ATM"));
+        ItemStack purchase = makeItem(Material.BELL, ColorTranslator.translateColorCodes("&#31d428&lPurchase ATM"), ColorTranslator.translateColorCodes("&7Cost: &a$" + atmCost));
 
-        inventory.setItem(2, back);
-        inventory.setItem(5, info);
-        inventory.setItem(7, purchase);
+        inventory.setItem(0, back);
+        inventory.setItem(4, info);
+        inventory.setItem(8, purchase);
 
+        setFillerGlass();
     }
 
     public void purchaseATM(Player player) {
         Economy economy = LittyBank.getEconomy();
 
-        if (economy.getBalance(player) >= 50.0){
+        if (economy.getBalance(player) >= atmCost){
 
-            EconomyResponse response = economy.withdrawPlayer(player, 50);
+            EconomyResponse response = economy.withdrawPlayer(player, atmCost);
 
             if (response.transactionSuccess()){
 
                 //chicka chicka chicka! slim shady! hotter than a set of twin babies!!!
                 player.getInventory().addItem(ATM.createATM(player));
-                player.sendMessage(MessageUtils.message("Purchased ATM; given."));
+                player.sendMessage(MessageUtils.message("The ATM has been purchased and placed in your inventory."));
 
             }else{
-
                 player.sendMessage(MessageUtils.message("Transaction Error. Try again later."));
-
             }
 
         }else{
-
             player.sendMessage(MessageUtils.message("You cant afford it you poor bitch."));
         }
     }

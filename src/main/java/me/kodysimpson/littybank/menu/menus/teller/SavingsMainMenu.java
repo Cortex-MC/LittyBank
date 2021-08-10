@@ -1,7 +1,5 @@
 package me.kodysimpson.littybank.menu.menus.teller;
 
-import me.kodysimpson.littybank.Database;
-import me.kodysimpson.littybank.utils.MessageUtils;
 import me.kodysimpson.simpapi.colors.ColorTranslator;
 import me.kodysimpson.simpapi.exceptions.MenuManagerException;
 import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
@@ -38,23 +36,23 @@ public class SavingsMainMenu extends Menu {
 
         if (e.getCurrentItem().getType() == Material.GREEN_GLAZED_TERRACOTTA){
 
-            if (Database.getAccounts(playerMenuUtility.getOwner()).size() >= 3) {
-                playerMenuUtility.getOwner().closeInventory();
-                playerMenuUtility.getOwner().sendMessage(MessageUtils.message("You cannot have more than 3 open accounts."));
-                return;
-            }
+//            if (Database.getAccounts(playerMenuUtility.getOwner()).size() >= 3) {
+//                playerMenuUtility.getOwner().closeInventory();
+//                playerMenuUtility.getOwner().sendMessage(MessageUtils.message("You cannot have more than 3 open accounts."));
+//                return;
+//            }
 
             MenuManager.openMenu(SavingsTierSelectionMenu.class, playerMenuUtility.getOwner());
 
         }else if (e.getCurrentItem().getType() == Material.BLUE_GLAZED_TERRACOTTA) {
 
-            if (Database.getAccounts(playerMenuUtility.getOwner()).isEmpty()) {
-                playerMenuUtility.getOwner().closeInventory();
-                playerMenuUtility.getOwner().sendMessage(MessageUtils.message("You don't have any open savings accounts."));
-                return;
-            }
+//            if (Database.getAccounts(playerMenuUtility.getOwner()).isEmpty()) {
+//                playerMenuUtility.getOwner().closeInventory();
+//                playerMenuUtility.getOwner().sendMessage(MessageUtils.message("You don't have any open savings accounts."));
+//                return;
+//            }
 
-            MenuManager.openMenu(SavingsAccountsMenu.class, playerMenuUtility.getOwner());
+            MenuManager.openMenu(AccountsListMenu.class, playerMenuUtility.getOwner());
 
         }else if (e.getCurrentItem().getType() == Material.BARRIER){
 

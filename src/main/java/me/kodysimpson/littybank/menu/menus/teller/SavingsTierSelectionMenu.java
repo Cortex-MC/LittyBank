@@ -1,6 +1,6 @@
 package me.kodysimpson.littybank.menu.menus.teller;
 
-import me.kodysimpson.littybank.menu.Data;
+import me.kodysimpson.littybank.menu.MenuData;
 import me.kodysimpson.littybank.models.AccountTier;
 import me.kodysimpson.littybank.utils.AccountUtils;
 import me.kodysimpson.simpapi.colors.ColorTranslator;
@@ -39,7 +39,7 @@ public class SavingsTierSelectionMenu extends Menu {
 
         if (AccountTier.isValidTier(e.getCurrentItem())){
 
-            playerMenuUtility.setData(Data.TIER_ITEM, e.getCurrentItem());
+            playerMenuUtility.setData(MenuData.TIER_ITEM, e.getCurrentItem());
             MenuManager.openMenu(ConfirmOpenAccountMenu.class, playerMenuUtility.getOwner());
 
         }else if (e.getCurrentItem().getType() == Material.BARRIER){
