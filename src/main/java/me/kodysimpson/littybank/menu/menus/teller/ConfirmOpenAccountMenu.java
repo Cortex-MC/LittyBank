@@ -6,6 +6,7 @@ import me.kodysimpson.littybank.menu.MenuData;
 import me.kodysimpson.littybank.models.AccountTier;
 import me.kodysimpson.littybank.models.SavingsAccount;
 import me.kodysimpson.littybank.utils.MessageUtils;
+import me.kodysimpson.simpapi.colors.ColorTranslator;
 import me.kodysimpson.simpapi.exceptions.MenuManagerException;
 import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
 import me.kodysimpson.simpapi.menu.Menu;
@@ -103,10 +104,9 @@ public class ConfirmOpenAccountMenu extends Menu {
     @Override
     public void setMenuItems() {
 
-        ItemStack yes = makeItem(Material.BELL, "Yes");
-        ItemStack no = makeItem(Material.BARRIER, "No");
+        ItemStack yes = makeItem(Material.BELL, ColorTranslator.translateColorCodes("&#54d13f&lYes"), ColorTranslator.translateColorCodes("&8Delete the account"));
+        ItemStack no = makeItem(Material.BARRIER, ColorTranslator.translateColorCodes("&4&lNo"), ColorTranslator.translateColorCodes("&8Go back"));
         ItemStack tierItem = playerMenuUtility.getData(MenuData.TIER_ITEM, ItemStack.class);
-
 
         inventory.setItem(0, tierItem);
         inventory.setItem(3, no);
