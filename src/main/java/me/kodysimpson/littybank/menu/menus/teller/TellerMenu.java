@@ -141,14 +141,12 @@ public class TellerMenu extends Menu {
 
             }else{
 
-                player.sendMessage(MessageUtils.message("Transaction Error. Try again later."));
+                player.sendMessage(MessageUtils.message(LittyBank.getPlugin().getMessageConfig().getTransactionError()));
 
             }
 
         }else{
-
-            player.sendMessage(MessageUtils.message("You cant afford it you poor bitch."));
-
+            player.sendMessage(MessageUtils.message(LittyBank.getPlugin().getMessageConfig().getCantAfford()));
         }
     }
 }

@@ -1,6 +1,11 @@
 package me.kodysimpson.littybank;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import me.kodysimpson.littybank.commands.CreateTellerCommand;
+import me.kodysimpson.littybank.configs.MessageConfig;
 import me.kodysimpson.littybank.database.Database;
 import me.kodysimpson.littybank.listeners.ATMListener;
 import me.kodysimpson.littybank.listeners.BankTellerListener;
@@ -11,7 +16,9 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -24,6 +31,9 @@ public final class LittyBank extends JavaPlugin {
     private static LittyBank plugin;
 
     private static String url;
+
+    //Config
+    private MessageConfig messageConfig;
 
     @Override
     public void onDisable() {
@@ -76,6 +86,39 @@ public final class LittyBank extends JavaPlugin {
         // 60 seconds for testing
         new InterestTask().runTaskTimerAsynchronously(this, 20, 20 * 60);
 
+        //Try config stuff
+        try {
+            MessageConfig messageConfig = loadConfig(MessageConfig.class);
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    private <T> T loadConfig(Class<T> configClass) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+
+        T config = null;
+        File messagesConfigFile = new File(this.getDataFolder(), "messages.yml");
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        if (!messagesConfigFile.exists()){
+            config = configClass.getConstructor().newInstance();
+
+            try {
+                mapper.writeValue(messagesConfigFile, config);
+                System.out.println("wrote file");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else{
+            //since it exists already, load the values into the object
+            try {
+                return mapper.readValue(messagesConfigFile, configClass);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return config;
     }
 
     private boolean setupEconomy() {
@@ -98,7 +141,7 @@ public final class LittyBank extends JavaPlugin {
         return econ;
     }
 
-    public static String getConnectionUrl() {
-        return url;
+    public MessageConfig getMessageConfig() {
+        return messageConfig;
     }
 }
