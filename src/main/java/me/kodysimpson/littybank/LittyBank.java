@@ -1,25 +1,20 @@
 package me.kodysimpson.littybank;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import me.kodysimpson.littybank.commands.CreateTellerCommand;
+import me.kodysimpson.littybank.configs.ATMConfig;
 import me.kodysimpson.littybank.configs.MessageConfig;
 import me.kodysimpson.littybank.database.Database;
 import me.kodysimpson.littybank.listeners.ATMListener;
 import me.kodysimpson.littybank.listeners.BankTellerListener;
 import me.kodysimpson.littybank.tasks.InterestTask;
 import me.kodysimpson.simpapi.command.CommandManager;
+import me.kodysimpson.simpapi.config.ConfigManager;
 import me.kodysimpson.simpapi.menu.MenuManager;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,18 +29,7 @@ public final class LittyBank extends JavaPlugin {
 
     //Config
     private MessageConfig messageConfig;
-
-    @Override
-    public void onDisable() {
-
-        try {
-            Database.getConnectionSource().close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        log.info(String.format("[%s] Disabled Version %s", getDescription().getName(), getDescription().getVersion()));
-    }
+    private ATMConfig atmConfig;
 
     @Override
     public void onEnable() {
@@ -86,39 +70,24 @@ public final class LittyBank extends JavaPlugin {
         // 60 seconds for testing
         new InterestTask().runTaskTimerAsynchronously(this, 20, 20 * 60);
 
-        //Try config stuff
+        //Configuration
+        messageConfig = ConfigManager.loadConfig(this, MessageConfig.class);
+        atmConfig = ConfigManager.loadConfig(this, ATMConfig.class);
+    }
+
+    @Override
+    public void onDisable() {
+
         try {
-            MessageConfig messageConfig = loadConfig(MessageConfig.class);
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            Database.getConnectionSource().close();
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
+        ConfigManager.saveConfig(this, messageConfig);
+        ConfigManager.saveConfig(this, atmConfig);
 
-    }
-
-    private <T> T loadConfig(Class<T> configClass) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-
-        T config = null;
-        File messagesConfigFile = new File(this.getDataFolder(), "messages.yml");
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        if (!messagesConfigFile.exists()){
-            config = configClass.getConstructor().newInstance();
-
-            try {
-                mapper.writeValue(messagesConfigFile, config);
-                System.out.println("wrote file");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }else{
-            //since it exists already, load the values into the object
-            try {
-                return mapper.readValue(messagesConfigFile, configClass);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return config;
+        log.info(String.format("[%s] Disabled Version %s", getDescription().getName(), getDescription().getVersion()));
     }
 
     private boolean setupEconomy() {

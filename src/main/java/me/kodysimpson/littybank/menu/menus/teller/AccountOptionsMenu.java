@@ -19,7 +19,6 @@ import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.ValidatingPrompt;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -32,7 +31,7 @@ public class AccountOptionsMenu extends Menu {
 
     public AccountOptionsMenu(PlayerMenuUtility pmu) throws SQLException {
         super(pmu);
-        account = Database.getSavingsAccountDao().queryForId(playerMenuUtility.getData(MenuData.ACCOUNT_ID, Integer.class));
+        account = Database.getSavingsDao().queryForId(playerMenuUtility.getData(MenuData.ACCOUNT_ID, Integer.class));
         economy = LittyBank.getEconomy();
     }
 
@@ -153,7 +152,7 @@ public class AccountOptionsMenu extends Menu {
         else {
 
             account.setBalance(account.getBalance() - value);
-            Database.getSavingsAccountDao().update(account);
+            Database.getSavingsDao().update(account);
 
             p.sendMessage(MessageUtils.message("Successfully withdrawn a $" + value + " note from the bank"));
         }
@@ -218,7 +217,7 @@ public class AccountOptionsMenu extends Menu {
         if (response.transactionSuccess()){
 
             account.setBalance(account.getBalance() + value);
-            Database.getSavingsAccountDao().update(account);
+            Database.getSavingsDao().update(account);
 
             p.sendMessage(MessageUtils.message("Successfully deposited $" + value + " in the bank"));
 

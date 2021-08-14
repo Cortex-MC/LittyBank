@@ -1,7 +1,5 @@
 package me.kodysimpson.littybank.menu.menus.teller;
 
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
 import me.kodysimpson.littybank.LittyBank;
 import me.kodysimpson.littybank.database.Database;
 import me.kodysimpson.littybank.menu.MenuData;
@@ -15,7 +13,6 @@ import me.kodysimpson.simpapi.menu.MenuManager;
 import me.kodysimpson.simpapi.menu.PlayerMenuUtility;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.event.entity.ItemMergeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -69,7 +66,7 @@ public class AccountsListMenu extends Menu {
 
         List<SavingsAccount> accounts = new ArrayList<>();
         try {
-            accounts = Database.getSavingsAccountDao().queryForEq("owner", p.getUniqueId());
+            accounts = Database.getSavingsDao().queryForEq("owner", p.getUniqueId());
         } catch (SQLException e) {
             e.printStackTrace();
         }

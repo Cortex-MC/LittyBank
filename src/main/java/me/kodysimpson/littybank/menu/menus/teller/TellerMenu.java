@@ -1,7 +1,9 @@
 package me.kodysimpson.littybank.menu.menus.teller;
 
 import me.kodysimpson.littybank.LittyBank;
+import me.kodysimpson.littybank.database.AccountQueries;
 import me.kodysimpson.littybank.models.BankNote;
+import me.kodysimpson.littybank.models.CheckingAccount;
 import me.kodysimpson.littybank.utils.MessageUtils;
 import me.kodysimpson.simpapi.colors.ColorTranslator;
 import me.kodysimpson.simpapi.exceptions.MenuManagerException;
@@ -22,8 +24,11 @@ import org.bukkit.inventory.ItemStack;
 
 public class TellerMenu extends Menu {
 
+    private final CheckingAccount checkingAccount;
+
     public TellerMenu(PlayerMenuUtility playerMenuUtility) {
         super(playerMenuUtility);
+        checkingAccount = AccountQueries.getAccountForPlayer(p);
     }
 
     @Override
@@ -33,7 +38,7 @@ public class TellerMenu extends Menu {
 
     @Override
     public int getSlots() {
-        return 36;
+        return 54;
     }
 
     @Override
@@ -61,6 +66,10 @@ public class TellerMenu extends Menu {
 
             playerMenuUtility.getOwner().closeInventory();
 
+        }else if (e.getCurrentItem().getType() == Material.CLOCK){
+
+            MenuManager.openMenu(CheckingAccountMenu.class, p);
+
         }
 
     }
@@ -71,6 +80,14 @@ public class TellerMenu extends Menu {
         ItemStack savings = makeItem(Material.SNOW_BLOCK, ColorTranslator.translateColorCodes("&#818de3&lSavings Accounts"),
                 ColorTranslator.translateColorCodes("&7Create and manage"), ColorTranslator.translateColorCodes("&7your savings accounts."));
 
+        ItemStack checkingAccount = makeItem(Material.CLOCK, ColorTranslator.translateColorCodes("&#d11919&lChecking Account"),
+                "&7Your checking account is",
+                "&7the primary method of",
+                "&7storing money.", " ",
+                "&7Any money here is safe,",
+                "&7even when you die.",
+                " ", "&#1692fa&lBalance&7: &a$" + this.checkingAccount.getBalance());
+
         ItemStack bankNotes = makeItem(Material.PAPER, ColorTranslator.translateColorCodes("&#66de2a&lBank Notes"),
                 ColorTranslator.translateColorCodes("&7Convert your money to"), ColorTranslator.translateColorCodes("&7bank notes."));
 
@@ -80,9 +97,10 @@ public class TellerMenu extends Menu {
         ItemStack close = makeItem(Material.BARRIER, ColorTranslator.translateColorCodes("&4&lClose"));
 
         inventory.setItem(11, savings);
-        inventory.setItem(13, bankNotes);
+        inventory.setItem(13, checkingAccount);
         inventory.setItem(15, ATM);
-        inventory.setItem(31, close);
+        inventory.setItem(31, bankNotes);
+        inventory.setItem(49, close);
         setFillerGlass();
 
     }

@@ -84,7 +84,7 @@ public class ConfirmOpenAccountMenu extends Menu {
                 account.setLastChecked(new Date());
                 account.setLastUpdated(new Date());
 
-                Database.getSavingsAccountDao().create(account);
+                Database.getSavingsDao().create(account);
 
                 player.sendMessage(MessageUtils.message("You have successfully opened a Savings Account."));
 

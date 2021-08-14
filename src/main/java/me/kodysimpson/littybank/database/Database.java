@@ -5,20 +5,12 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import me.kodysimpson.littybank.LittyBank;
 import me.kodysimpson.littybank.models.ATM;
-import me.kodysimpson.littybank.models.AccountTier;
+import me.kodysimpson.littybank.models.CheckingAccount;
 import me.kodysimpson.littybank.models.SavingsAccount;
-import me.kodysimpson.littybank.utils.SavingsAccountsComparator;
-import me.kodysimpson.littybank.utils.Serializer;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 
 public class Database {
@@ -28,7 +20,8 @@ public class Database {
 
     private static ConnectionSource connectionSource;
 
-    private static Dao<SavingsAccount, Integer> savingsAccountDao;
+    private static Dao<CheckingAccount, UUID> checkingsDao;
+    private static Dao<SavingsAccount, Integer> savingsDao;
     private static Dao<ATM, Integer> atmDao;
 
     public static ConnectionSource getConnectionSource(){
@@ -50,9 +43,11 @@ public class Database {
 
         try {
 
-            savingsAccountDao = DaoManager.createDao(getConnectionSource(), SavingsAccount.class);
+            checkingsDao = DaoManager.createDao(getConnectionSource(), CheckingAccount.class);
+            savingsDao = DaoManager.createDao(getConnectionSource(), SavingsAccount.class);
             atmDao = DaoManager.createDao(getConnectionSource(), ATM.class);
 
+            TableUtils.createTableIfNotExists(connectionSource, CheckingAccount.class);
             TableUtils.createTableIfNotExists(connectionSource, SavingsAccount.class);
             TableUtils.createTableIfNotExists(connectionSource, ATM.class);
 
@@ -64,8 +59,12 @@ public class Database {
 
     }
 
-    public static Dao<SavingsAccount, Integer> getSavingsAccountDao() {
-        return savingsAccountDao;
+    public static Dao<SavingsAccount, Integer> getSavingsDao() {
+        return savingsDao;
+    }
+
+    public static Dao<CheckingAccount, UUID> getCheckingsDao() {
+        return checkingsDao;
     }
 
     public static Dao<ATM, Integer> getAtmDao() {

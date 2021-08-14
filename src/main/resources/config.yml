@@ -11,5 +11,3 @@ savings-accounts:
     tierName: '&#6295c6&lPlatinum Tier'
     price: 10000000.0
     interest: 1.0
-
-atm-cost: 10000.0

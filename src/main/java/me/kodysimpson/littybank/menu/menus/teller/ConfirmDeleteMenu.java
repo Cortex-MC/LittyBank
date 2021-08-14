@@ -27,7 +27,7 @@ public class ConfirmDeleteMenu extends Menu {
     public ConfirmDeleteMenu(PlayerMenuUtility playerMenuUtility) throws SQLException {
         super(playerMenuUtility);
         economy = LittyBank.getEconomy();
-        account = Database.getSavingsAccountDao().queryForId(playerMenuUtility.getData(MenuData.ACCOUNT_ID, Integer.class));
+        account = Database.getSavingsDao().queryForId(playerMenuUtility.getData(MenuData.ACCOUNT_ID, Integer.class));
     }
 
     @Override
@@ -79,7 +79,7 @@ public class ConfirmDeleteMenu extends Menu {
 
         if (response.transactionSuccess()){
 
-            Database.getSavingsAccountDao().delete(account);
+            Database.getSavingsDao().delete(account);
 
             p.sendMessage(MessageUtils.message("Your account has been successfully deleted and $" + account.getBalance() + " has been added to your balance.\n" +
                     "Will add a confirmation menu later"));

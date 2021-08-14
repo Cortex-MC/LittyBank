@@ -14,7 +14,7 @@ public class InterestTask extends BukkitRunnable {
 
         List<SavingsAccount> accounts = null;
         try {
-            accounts = Database.getSavingsAccountDao().queryForAll();
+            accounts = Database.getSavingsDao().queryForAll();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -29,7 +29,7 @@ public class InterestTask extends BukkitRunnable {
 
                 //update the account with the new interest
                 try {
-                    Database.getSavingsAccountDao().update(account);
+                    Database.getSavingsDao().update(account);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

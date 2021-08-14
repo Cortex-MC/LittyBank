@@ -1,15 +1,7 @@
 package me.kodysimpson.littybank.models;
 
-import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import me.kodysimpson.littybank.LittyBank;
-import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
-
 import java.util.Date;
 import java.util.UUID;
 

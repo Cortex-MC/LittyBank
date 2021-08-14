@@ -1,6 +1,8 @@
 package me.kodysimpson.littybank.models;
 
 import com.j256.ormlite.field.DatabaseField;
+import lombok.Getter;
+import lombok.Setter;
 import me.kodysimpson.littybank.LittyBank;
 import me.kodysimpson.littybank.utils.Serializer;
 import me.kodysimpson.simpapi.colors.ColorTranslator;
@@ -17,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Getter
+@Setter
 public class ATM {
 
     @DatabaseField(generatedId = true)
@@ -26,6 +30,10 @@ public class ATM {
     private UUID owner;
     @DatabaseField(width = 2048)
     private String location;
+    @DatabaseField
+    private double balance;
+    @DatabaseField
+    private double earnings;
 
     public ATM(){
 
