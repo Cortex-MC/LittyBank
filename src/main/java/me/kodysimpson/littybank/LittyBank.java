@@ -2,6 +2,7 @@ package me.kodysimpson.littybank;
 
 import me.kodysimpson.littybank.commands.CreateTellerCommand;
 import me.kodysimpson.littybank.configs.ATMConfig;
+import me.kodysimpson.littybank.configs.AccountConfig;
 import me.kodysimpson.littybank.configs.MessageConfig;
 import me.kodysimpson.littybank.database.Database;
 import me.kodysimpson.littybank.listeners.ATMListener;
@@ -30,6 +31,7 @@ public final class LittyBank extends JavaPlugin {
     //Config
     private MessageConfig messageConfig;
     private ATMConfig atmConfig;
+    private AccountConfig accountConfig;
 
     @Override
     public void onEnable() {
@@ -61,6 +63,11 @@ public final class LittyBank extends JavaPlugin {
 
         MenuManager.setup(getServer(), this);
 
+        //Configuration
+        messageConfig = ConfigManager.loadConfig(this, MessageConfig.class);
+        atmConfig = ConfigManager.loadConfig(this, ATMConfig.class);
+        accountConfig = ConfigManager.loadConfig(this, AccountConfig.class);
+
         try {
             CommandManager.createCoreCommand(this, "litty", "litty bank core", "/litty", null, Arrays.asList("pickle"),  CreateTellerCommand.class);
         } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -68,11 +75,7 @@ public final class LittyBank extends JavaPlugin {
         }
 
         // 60 seconds for testing
-        new InterestTask().runTaskTimerAsynchronously(this, 20, 20 * 60);
-
-        //Configuration
-        messageConfig = ConfigManager.loadConfig(this, MessageConfig.class);
-        atmConfig = ConfigManager.loadConfig(this, ATMConfig.class);
+        new InterestTask().runTaskTimerAsynchronously(this, 20, accountConfig.getCompoundingPeriodTicks());
     }
 
     @Override
@@ -86,6 +89,7 @@ public final class LittyBank extends JavaPlugin {
 
         ConfigManager.saveConfig(this, messageConfig);
         ConfigManager.saveConfig(this, atmConfig);
+        ConfigManager.saveConfig(this, accountConfig);
 
         log.info(String.format("[%s] Disabled Version %s", getDescription().getName(), getDescription().getVersion()));
     }
@@ -112,5 +116,13 @@ public final class LittyBank extends JavaPlugin {
 
     public MessageConfig getMessageConfig() {
         return messageConfig;
+    }
+
+    public ATMConfig getAtmConfig() {
+        return atmConfig;
+    }
+
+    public AccountConfig getAccountConfig() {
+        return accountConfig;
     }
 }

@@ -4,10 +4,10 @@ savings-accounts:
     price: 200.0
     interest: 0.05
   GOLD:
-    tierName: '&#767718&lGold Tier'
+    tierName: ''
     price: 10000.0
     interest: 0.50
   PLATINUM:
-    tierName: '&#6295c6&lPlatinum Tier'
+    tierName: ''
     price: 10000000.0
     interest: 1.0

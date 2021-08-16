@@ -1,10 +1,14 @@
-package me.kodysimpson.littybank.menu.menus.teller;
+package me.kodysimpson.littybank.menu.menus.teller.savings;
 
+import me.kodysimpson.littybank.database.AccountQueries;
 import me.kodysimpson.littybank.database.Database;
 import me.kodysimpson.littybank.LittyBank;
 import me.kodysimpson.littybank.menu.MenuData;
+import me.kodysimpson.littybank.menu.menus.teller.TellerMenu;
+import me.kodysimpson.littybank.models.AccountTier;
 import me.kodysimpson.littybank.models.BankNote;
 import me.kodysimpson.littybank.models.SavingsAccount;
+import me.kodysimpson.littybank.utils.AccountUtils;
 import me.kodysimpson.littybank.utils.MessageUtils;
 import me.kodysimpson.simpapi.colors.ColorTranslator;
 import me.kodysimpson.simpapi.exceptions.MenuManagerException;
@@ -28,11 +32,13 @@ public class AccountOptionsMenu extends Menu {
 
     private final SavingsAccount account;
     private final Economy economy;
+    private final AccountTier nextTier;
 
     public AccountOptionsMenu(PlayerMenuUtility pmu) throws SQLException {
         super(pmu);
-        account = Database.getSavingsDao().queryForId(playerMenuUtility.getData(MenuData.ACCOUNT_ID, Integer.class));
+        account = AccountQueries.getSavingsAccount(p);
         economy = LittyBank.getEconomy();
+        nextTier = AccountUtils.getNextTier(account.getTier());
     }
 
 
@@ -43,7 +49,7 @@ public class AccountOptionsMenu extends Menu {
 
     @Override
     public int getSlots() {
-        return 9;
+        return 36;
     }
 
     @Override
@@ -67,7 +73,13 @@ public class AccountOptionsMenu extends Menu {
                 p.closeInventory();
                 startDepositConversation();
             }
-            case BARRIER -> MenuManager.openMenu(AccountsListMenu.class, p);
+            case END_CRYSTAL -> {
+                if (nextTier != null){
+                    playerMenuUtility.setData(MenuData.UPGRADE_TIER, AccountUtils.getNextTier(account.getTier()));
+                    MenuManager.openMenu(ConfirmUpgradeMenu.class, p);
+                }
+            }
+            case BARRIER -> MenuManager.openMenu(TellerMenu.class, p);
         }
 
     }
@@ -78,16 +90,36 @@ public class AccountOptionsMenu extends Menu {
                 ColorTranslator.translateColorCodes("&7Withdraw money from this"), ColorTranslator.translateColorCodes("&7account to your balance."));
         ItemStack deposit = makeItem(Material.BLUE_CONCRETE, ColorTranslator.translateColorCodes("&#6e54e3&lDeposit"),
                 ColorTranslator.translateColorCodes("&7Deposit money from your"), ColorTranslator.translateColorCodes("&7balance to this account."));
-        ItemStack info = makeItem(Material.WRITABLE_BOOK, ColorTranslator.translateColorCodes("Information"));
+        ItemStack info = makeItem(Material.WRITABLE_BOOK, ColorTranslator.translateColorCodes("&e&lInformation"),
+                "&7Interest Rate: &a" + LittyBank.getPlugin().getAccountConfig().getSavingsAccountTiers().get(account.getTier()).getInterestRate() + "%",
+                " ",
+                "&7Balance: &#1692fa" + account.getBalance());
+        ItemStack upgrade;
+        if (nextTier != null){
+            upgrade = makeItem(Material.END_CRYSTAL, ColorTranslator.translateColorCodes("&#d21377&lUpgrade"),
+                    "&7Current Tier: " + AccountUtils.getAccountTierName(account.getTier()),
+                    "&7Next Tier: " + AccountUtils.getAccountTierName(nextTier),
+                    "&7Cost: &a" + AccountUtils.getAccountPrice(nextTier),
+                    " ", "&7Upgrading to the next tier",
+                    "&7will provide a &#1692fa" + AccountUtils.getAccountInterest(nextTier) + "%",
+                    "&7interest rate.");
+        }else{
+            upgrade = makeItem(Material.END_CRYSTAL, ColorTranslator.translateColorCodes("&#d21377&lUpgrade"),
+                    "&7Current Tier: " + AccountUtils.getAccountTierName(account.getTier()),
+                    " ", "&7You cannot upgrade further,",
+                    "&7at max tier.");
+        }
+
         ItemStack delete = makeItem(Material.LAVA_BUCKET, ColorTranslator.translateColorCodes("&#e35954&lDelete Account"),
-                ColorTranslator.translateColorCodes("&7Permanently delete this account."), ColorTranslator.translateColorCodes("&7Available balance will be"), ColorTranslator.translateColorCodes("&7deposited to your balance."));
+                ColorTranslator.translateColorCodes("&7Permanently delete this account."), ColorTranslator.translateColorCodes("&7Available balance will be"), ColorTranslator.translateColorCodes("&7given as cash."));
         ItemStack back = makeItem(Material.BARRIER, ColorTranslator.translateColorCodes("&4&lBack"));
 
-        inventory.setItem(0, withdraw);
-        inventory.setItem(2, deposit);
-        inventory.setItem(4, info);
-        inventory.setItem(6, delete);
-        inventory.setItem(8, back);
+        inventory.setItem(9, withdraw);
+        inventory.setItem(11, deposit);
+        inventory.setItem(13, info);
+        inventory.setItem(15, upgrade);
+        inventory.setItem(17, delete);
+        inventory.setItem(31, back);
 
         setFillerGlass();
     }

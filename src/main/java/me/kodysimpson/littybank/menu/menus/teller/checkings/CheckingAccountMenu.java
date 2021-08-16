@@ -1,12 +1,13 @@
-package me.kodysimpson.littybank.menu.menus.teller;
+package me.kodysimpson.littybank.menu.menus.teller.checkings;
 
 import me.kodysimpson.littybank.database.AccountQueries;
-import me.kodysimpson.littybank.database.Database;
+import me.kodysimpson.littybank.menu.menus.teller.TellerMenu;
 import me.kodysimpson.littybank.models.CheckingAccount;
 import me.kodysimpson.simpapi.colors.ColorTranslator;
 import me.kodysimpson.simpapi.exceptions.MenuManagerException;
 import me.kodysimpson.simpapi.exceptions.MenuManagerNotSetupException;
 import me.kodysimpson.simpapi.menu.Menu;
+import me.kodysimpson.simpapi.menu.MenuManager;
 import me.kodysimpson.simpapi.menu.PlayerMenuUtility;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -38,6 +39,11 @@ public class CheckingAccountMenu extends Menu {
 
     @Override
     public void handleMenu(InventoryClickEvent inventoryClickEvent) throws MenuManagerNotSetupException, MenuManagerException {
+
+        switch (inventoryClickEvent.getCurrentItem().getType()) {
+            case TRIPWIRE_HOOK -> MenuManager.openMenu(WireSelectionMenu.class, p);
+            case BARRIER -> MenuManager.openMenu(TellerMenu.class, p);
+        }
 
     }
 

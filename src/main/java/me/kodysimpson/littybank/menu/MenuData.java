@@ -4,5 +4,6 @@ public enum MenuData {
     ATM,
     ACCOUNT_ID,
     ACCOUNT_NAME,
-    TIER_ITEM
+    CONFIRM_TIER,
+    UPGRADE_TIER
 }

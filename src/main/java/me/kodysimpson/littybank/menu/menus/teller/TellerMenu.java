@@ -2,6 +2,9 @@ package me.kodysimpson.littybank.menu.menus.teller;
 
 import me.kodysimpson.littybank.LittyBank;
 import me.kodysimpson.littybank.database.AccountQueries;
+import me.kodysimpson.littybank.menu.menus.teller.checkings.CheckingAccountMenu;
+import me.kodysimpson.littybank.menu.menus.teller.savings.AccountOptionsMenu;
+import me.kodysimpson.littybank.menu.menus.teller.savings.SavingsTierSelectionMenu;
 import me.kodysimpson.littybank.models.BankNote;
 import me.kodysimpson.littybank.models.CheckingAccount;
 import me.kodysimpson.littybank.utils.MessageUtils;
@@ -25,10 +28,12 @@ import org.bukkit.inventory.ItemStack;
 public class TellerMenu extends Menu {
 
     private final CheckingAccount checkingAccount;
+    private final boolean hasSavings;
 
     public TellerMenu(PlayerMenuUtility playerMenuUtility) {
         super(playerMenuUtility);
         checkingAccount = AccountQueries.getAccountForPlayer(p);
+        hasSavings = AccountQueries.hasSavingsAccount(p);
     }
 
     @Override
@@ -49,27 +54,21 @@ public class TellerMenu extends Menu {
     @Override
     public void handleMenu(InventoryClickEvent e) throws MenuManagerNotSetupException, MenuManagerException {
 
-        if (e.getCurrentItem().getType() == Material.SNOW_BLOCK){
-
-            MenuManager.openMenu(SavingsMainMenu.class, playerMenuUtility.getOwner());
-
+        if (e.getCurrentItem().getType() == Material.CHEST){
+            if (hasSavings){
+                MenuManager.openMenu(AccountOptionsMenu.class, p);
+            }else{
+                MenuManager.openMenu(SavingsTierSelectionMenu.class, p);
+            }
         }else if (e.getCurrentItem().getType() == Material.ANVIL){
-
             MenuManager.openMenu(PurchaseATMMenu.class, playerMenuUtility.getOwner());
-
         }else if (e.getCurrentItem().getType() == Material.PAPER) {
-
             playerMenuUtility.getOwner().closeInventory();
             bankNoteConversation(playerMenuUtility.getOwner());
-
         }else if (e.getCurrentItem().getType() == Material.BARRIER){
-
             playerMenuUtility.getOwner().closeInventory();
-
         }else if (e.getCurrentItem().getType() == Material.CLOCK){
-
             MenuManager.openMenu(CheckingAccountMenu.class, p);
-
         }
 
     }
@@ -77,8 +76,14 @@ public class TellerMenu extends Menu {
     @Override
     public void setMenuItems() {
 
-        ItemStack savings = makeItem(Material.SNOW_BLOCK, ColorTranslator.translateColorCodes("&#818de3&lSavings Accounts"),
-                ColorTranslator.translateColorCodes("&7Create and manage"), ColorTranslator.translateColorCodes("&7your savings accounts."));
+        ItemStack savings = makeItem(Material.CHEST, ColorTranslator.translateColorCodes("&#818de3&lSavings Account"),
+                (!hasSavings) ? "&cCreate a new Account" : "&#1692faView Account",
+                " ",
+                "&7A savings account is",
+                "&7used to store money long",
+                "&7term for interest.", " ",
+                "&7The higher the tier, the",
+                "&7higher the money gained.");
 
         ItemStack checkingAccount = makeItem(Material.CLOCK, ColorTranslator.translateColorCodes("&#d11919&lChecking Account"),
                 "&7Your checking account is",
@@ -89,10 +94,16 @@ public class TellerMenu extends Menu {
                 " ", "&#1692fa&lBalance&7: &a$" + this.checkingAccount.getBalance());
 
         ItemStack bankNotes = makeItem(Material.PAPER, ColorTranslator.translateColorCodes("&#66de2a&lBank Notes"),
-                ColorTranslator.translateColorCodes("&7Convert your money to"), ColorTranslator.translateColorCodes("&7bank notes."));
+                "&7Convert your money to",
+                "&7bank notes, physical items ",
+                "&7that can be cashed at a teller",
+                "&7such as myself.");
 
         ItemStack ATM = makeItem(Material.ANVIL, ColorTranslator.translateColorCodes("&#f261b6&lPurchase ATM"),
-                ColorTranslator.translateColorCodes("&7Get your very own portable"), ColorTranslator.translateColorCodes("&7ATM for easy access to your"), ColorTranslator.translateColorCodes("&7savings accounts."));
+                "&7Get your very own portable",
+                "&7ATM to allow users to withdraw",
+                "&7money from their checking accounts",
+                "&7, for a small fee that you collect.");
 
         ItemStack close = makeItem(Material.BARRIER, ColorTranslator.translateColorCodes("&4&lClose"));
 

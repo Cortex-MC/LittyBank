@@ -1,8 +1,9 @@
-package me.kodysimpson.littybank.menu.menus.teller;
+package me.kodysimpson.littybank.menu.menus.teller.savings;
 
 import me.kodysimpson.littybank.LittyBank;
 import me.kodysimpson.littybank.database.Database;
 import me.kodysimpson.littybank.menu.MenuData;
+import me.kodysimpson.littybank.menu.menus.teller.savings.AccountOptionsMenu;
 import me.kodysimpson.littybank.models.SavingsAccount;
 import me.kodysimpson.littybank.utils.MessageUtils;
 import me.kodysimpson.simpapi.colors.ColorTranslator;
@@ -64,8 +65,8 @@ public class ConfirmDeleteMenu extends Menu {
 
     @Override
     public void setMenuItems() {
-        ItemStack yes = makeItem(Material.BELL, ColorTranslator.translateColorCodes("&#54d13f&lYes"), ColorTranslator.translateColorCodes("&8Delete the account"));
-        ItemStack no = makeItem(Material.BARRIER, ColorTranslator.translateColorCodes("&4&lNo"), ColorTranslator.translateColorCodes("&8Go back"));
+        ItemStack yes = makeItem(Material.BELL, ColorTranslator.translateColorCodes("&#54d13f&lYes"), ColorTranslator.translateColorCodes("&7Delete the account"));
+        ItemStack no = makeItem(Material.BARRIER, ColorTranslator.translateColorCodes("&4&lNo"), ColorTranslator.translateColorCodes("&7Go back"));
 
         inventory.setItem(0, no);
         inventory.setItem(8, yes);

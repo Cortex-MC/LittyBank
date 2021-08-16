@@ -3,7 +3,6 @@ package me.kodysimpson.littybank.menu.atm;
 import me.kodysimpson.littybank.database.Database;
 import me.kodysimpson.littybank.LittyBank;
 import me.kodysimpson.littybank.menu.MenuData;
-import me.kodysimpson.littybank.menu.menus.teller.AccountsListMenu;
 import me.kodysimpson.littybank.models.ATM;
 import me.kodysimpson.littybank.models.BankNote;
 import me.kodysimpson.littybank.utils.MessageUtils;

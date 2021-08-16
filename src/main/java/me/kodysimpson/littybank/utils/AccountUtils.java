@@ -6,45 +6,25 @@ import me.kodysimpson.littybank.models.AccountTier;
 public class AccountUtils {
 
     public static double getAccountPrice(AccountTier accountTier){
-
-        switch (accountTier){
-            case SILVER:
-                return LittyBank.getPlugin().getConfig().getDouble("savings-accounts.SILVER.price");
-            case GOLD:
-                return LittyBank.getPlugin().getConfig().getDouble("savings-accounts.GOLD.price");
-            case PLATINUM:
-                return LittyBank.getPlugin().getConfig().getDouble("savings-accounts.PLATINUM.price");
-        }
-
-        return 0;
+        return LittyBank.getPlugin().getAccountConfig().getSavingsAccountTiers().get(accountTier).getCost();
     }
 
     public static double getAccountInterest(AccountTier accountTier){
-
-        switch (accountTier){
-            case SILVER:
-                return LittyBank.getPlugin().getConfig().getDouble("savings-accounts.SILVER.interest");
-            case GOLD:
-                return LittyBank.getPlugin().getConfig().getDouble("savings-accounts.GOLD.interest");
-            case PLATINUM:
-                return LittyBank.getPlugin().getConfig().getDouble("savings-accounts.PLATINUM.interest");
-        }
-
-        return 0;
+        return LittyBank.getPlugin().getAccountConfig().getSavingsAccountTiers().get(accountTier).getInterestRate();
     }
 
     public static String getAccountTierName(AccountTier accountTier){
+        return LittyBank.getPlugin().getAccountConfig().getSavingsAccountTiers().get(accountTier).getDisplayName();
+    }
 
-        switch (accountTier){
-            case SILVER:
-                return LittyBank.getPlugin().getConfig().getString("savings-accounts.SILVER.tierName");
-            case GOLD:
-                return LittyBank.getPlugin().getConfig().getString("savings-accounts.GOLD.tierName");
-            case PLATINUM:
-                return LittyBank.getPlugin().getConfig().getString("savings-accounts.PLATINUM.tierName");
+    public static AccountTier getNextTier(AccountTier accountTier){
+        if (accountTier == AccountTier.SILVER){
+            return AccountTier.GOLD;
+        }else if (accountTier == AccountTier.GOLD){
+            return AccountTier.PLATINUM;
+        }else{
+            return null;
         }
-
-        return null;
     }
 
 }

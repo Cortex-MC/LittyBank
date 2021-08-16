@@ -1,6 +1,7 @@
-package me.kodysimpson.littybank.menu.menus.teller;
+package me.kodysimpson.littybank.menu.menus.teller.savings;
 
 import me.kodysimpson.littybank.menu.MenuData;
+import me.kodysimpson.littybank.menu.menus.teller.TellerMenu;
 import me.kodysimpson.littybank.models.AccountTier;
 import me.kodysimpson.littybank.utils.AccountUtils;
 import me.kodysimpson.simpapi.colors.ColorTranslator;
@@ -38,15 +39,10 @@ public class SavingsTierSelectionMenu extends Menu {
     public void handleMenu(InventoryClickEvent e) throws MenuManagerNotSetupException, MenuManagerException {
 
         if (AccountTier.isValidTier(e.getCurrentItem())){
-
-            playerMenuUtility.setData(MenuData.TIER_ITEM, e.getCurrentItem());
-            MenuManager.openMenu(ConfirmOpenAccountMenu.class, playerMenuUtility.getOwner());
-
-        }else if (e.getCurrentItem().getType() == Material.BARRIER){
-
-            MenuManager.openMenu(SavingsMainMenu.class, playerMenuUtility.getOwner());
-
-        }
+            playerMenuUtility.setData(MenuData.CONFIRM_TIER, AccountTier.getTierFromItem(e.getCurrentItem()));
+            MenuManager.openMenu(ConfirmOpenAccountMenu.class, p);
+        }else if (e.getCurrentItem().getType() == Material.BARRIER)
+            MenuManager.openMenu(TellerMenu.class, p);
 
     }
 
