@@ -19,10 +19,5 @@ public class ATMQueries {
         return Database.getAtmDao().queryForFirst(queryBuilder.prepare());
     }
 
-    public static void updateBalance(SavingsAccount account){
-
-
-
-    }
 
 }

@@ -75,7 +75,7 @@ public final class LittyBank extends JavaPlugin {
         }
 
         // 60 seconds for testing
-        new InterestTask().runTaskTimerAsynchronously(this, 20, accountConfig.getCompoundingPeriodTicks());
+        new InterestTask().runTaskTimerAsynchronously(this, 20, accountConfig.getCompoundingPeriodSeconds() * 20);
     }
 
     @Override

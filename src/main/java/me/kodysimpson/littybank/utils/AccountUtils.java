@@ -5,7 +5,7 @@ import me.kodysimpson.littybank.models.AccountTier;
 
 public class AccountUtils {
 
-    public static double getAccountPrice(AccountTier accountTier){
+    public static double getTierCost(AccountTier accountTier){
         return LittyBank.getPlugin().getAccountConfig().getSavingsAccountTiers().get(accountTier).getCost();
     }
 
@@ -17,6 +17,16 @@ public class AccountUtils {
         return LittyBank.getPlugin().getAccountConfig().getSavingsAccountTiers().get(accountTier).getDisplayName();
     }
 
+    public static AccountTier getPreviousTier(AccountTier accountTier){
+        if (accountTier == AccountTier.GOLD){
+            return AccountTier.SILVER;
+        }else if (accountTier == AccountTier.PLATINUM){
+            return AccountTier.GOLD;
+        }else{
+            return null;
+        }
+    }
+
     public static AccountTier getNextTier(AccountTier accountTier){
         if (accountTier == AccountTier.SILVER){
             return AccountTier.GOLD;
@@ -25,6 +35,10 @@ public class AccountUtils {
         }else{
             return null;
         }
+    }
+
+    public static String getPrettyBalance(double balance){
+        return String.format("%,.2f", balance);
     }
 
 }

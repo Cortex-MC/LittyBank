@@ -2,6 +2,7 @@ package me.kodysimpson.littybank.database;
 
 import com.j256.ormlite.stmt.QueryBuilder;
 import me.kodysimpson.littybank.models.ATM;
+import me.kodysimpson.littybank.models.AccountTier;
 import me.kodysimpson.littybank.models.CheckingAccount;
 import me.kodysimpson.littybank.models.SavingsAccount;
 import me.kodysimpson.littybank.utils.Serializer;
@@ -49,6 +50,22 @@ public class AccountQueries {
         queryBuilder.where().eq("owner", p.getUniqueId());
 
         return Database.getSavingsDao().queryForFirst(queryBuilder.prepare());
+    }
+
+    /**
+     * @param p The player
+     * @param nextTier The tier to upgrade to
+     * @return if it worked or not
+     */
+    public static boolean upgradeSavingsAccount(Player p, AccountTier nextTier) throws SQLException {
+        SavingsAccount account = getSavingsAccount(p);
+        if (account == null){
+            return false;
+        }else{
+            account.setTier(nextTier);
+            Database.getSavingsDao().update(account);
+            return true;
+        }
     }
 
 }

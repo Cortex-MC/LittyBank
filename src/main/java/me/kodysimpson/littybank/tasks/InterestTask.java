@@ -4,6 +4,7 @@ import me.kodysimpson.littybank.LittyBank;
 import me.kodysimpson.littybank.database.Database;
 import me.kodysimpson.littybank.models.SavingsAccount;
 import me.kodysimpson.littybank.utils.AccountUtils;
+import me.kodysimpson.littybank.utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -38,7 +39,7 @@ public class InterestTask extends BukkitRunnable {
                     if (LittyBank.getPlugin().getAccountConfig().isAlertInterestGained()){
                         OfflinePlayer player = Bukkit.getOfflinePlayer(account.getOwner());
                         if (player.isOnline()){
-                            player.getPlayer().sendMessage("Your " + account.getTier() + " savings account has just earned $" + gained + ".");
+                            MessageUtils.message(player.getPlayer(), "Your " + account.getTier() + " savings account has just earned $" + AccountUtils.getPrettyBalance(gained) + ".");
                         }
                     }
                 } catch (SQLException e) {

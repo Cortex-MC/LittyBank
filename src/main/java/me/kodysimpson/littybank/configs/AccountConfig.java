@@ -20,7 +20,7 @@ public class AccountConfig {
             .put(AccountTier.PLATINUM, new AccountTierConfig("&#6295c6&lPlatinum Tier", 200.0, 1.0, Material.NETHERITE_INGOT))
             .build();
 
-    private final long compoundingPeriodTicks = 72000;
+    private final long compoundingPeriodSeconds = 3600; //1 hour
     private final boolean alertInterestGained = true;
 
 }

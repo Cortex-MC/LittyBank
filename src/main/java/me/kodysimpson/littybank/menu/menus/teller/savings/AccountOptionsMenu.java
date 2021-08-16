@@ -99,7 +99,7 @@ public class AccountOptionsMenu extends Menu {
             upgrade = makeItem(Material.END_CRYSTAL, ColorTranslator.translateColorCodes("&#d21377&lUpgrade"),
                     "&7Current Tier: " + AccountUtils.getAccountTierName(account.getTier()),
                     "&7Next Tier: " + AccountUtils.getAccountTierName(nextTier),
-                    "&7Cost: &a" + AccountUtils.getAccountPrice(nextTier),
+                    "&7Cost: &a" + AccountUtils.getTierCost(nextTier),
                     " ", "&7Upgrading to the next tier",
                     "&7will provide a &#1692fa" + AccountUtils.getAccountInterest(nextTier) + "%",
                     "&7interest rate.");

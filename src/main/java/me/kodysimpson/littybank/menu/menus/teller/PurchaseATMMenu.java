@@ -60,9 +60,11 @@ public class PurchaseATMMenu extends Menu {
         ItemStack back = makeItem(Material.BARRIER, ColorTranslator.translateColorCodes("&4&lBack"));
 
         ItemStack info = makeItem(Material.ANVIL, ColorTranslator.translateColorCodes("&6&lATM"),
-                ColorTranslator.translateColorCodes("&7An ATM is a portable machine"),
-                ColorTranslator.translateColorCodes("&7you can withdraw money from."), " ",
-                ColorTranslator.translateColorCodes("&7Cost: &a$" + atmCost));
+                "&7Get your very own portable",
+                "&7ATM to allow users to withdraw",
+                "&7money from their checking accounts",
+                "&7, for a small fee that you collect.", " ",
+                "&7Cost: &a" + atmCost);
 
         ItemStack purchase = makeItem(Material.BELL, ColorTranslator.translateColorCodes("&#31d428&lPurchase ATM"), ColorTranslator.translateColorCodes("&7Cost: &a$" + atmCost));
 

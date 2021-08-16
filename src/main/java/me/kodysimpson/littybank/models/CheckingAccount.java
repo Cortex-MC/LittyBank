@@ -17,6 +17,10 @@ public class CheckingAccount {
     @DatabaseField
     private double balance;
 
+    public String getPrettyBalance(){
+        return String.format("%,.2f", this.balance);
+    }
+
 //    public String formatId() {
 //        String stringID = String.valueOf(id);
 //        while (stringID.length()<8) {

@@ -50,13 +50,13 @@ public class SavingsTierSelectionMenu extends Menu {
     public void setMenuItems() {
 
         ItemStack silver = makeItem(AccountTier.SILVER.getAsMaterial(), ColorTranslator.translateColorCodes(AccountUtils.getAccountTierName(AccountTier.SILVER)),
-                ColorTranslator.translateColorCodes("&7Price: &a$" + AccountUtils.getAccountPrice(AccountTier.SILVER)),
+                ColorTranslator.translateColorCodes("&7Price: &a$" + AccountUtils.getTierCost(AccountTier.SILVER)),
                 ColorTranslator.translateColorCodes("&7Interest Rate: &a" + AccountUtils.getAccountInterest(AccountTier.SILVER) + "%"));
         ItemStack gold = makeItem(AccountTier.GOLD.getAsMaterial(), ColorTranslator.translateColorCodes(AccountUtils.getAccountTierName(AccountTier.GOLD)),
-                ColorTranslator.translateColorCodes("&7Price: &a$" + AccountUtils.getAccountPrice(AccountTier.GOLD)),
+                ColorTranslator.translateColorCodes("&7Price: &a$" + AccountUtils.getTierCost(AccountTier.GOLD)),
                 ColorTranslator.translateColorCodes("&7Interest Rate: &a" + AccountUtils.getAccountInterest(AccountTier.GOLD) + "%"));
         ItemStack plat = makeItem(AccountTier.PLATINUM.getAsMaterial(), ColorTranslator.translateColorCodes(AccountUtils.getAccountTierName(AccountTier.PLATINUM)),
-                ColorTranslator.translateColorCodes("&7Price: &a$" + AccountUtils.getAccountPrice(AccountTier.PLATINUM)),
+                ColorTranslator.translateColorCodes("&7Price: &a$" + AccountUtils.getTierCost(AccountTier.PLATINUM)),
                 ColorTranslator.translateColorCodes("&7Interest Rate: &a" + AccountUtils.getAccountInterest(AccountTier.PLATINUM) + "%"));
 
         ItemStack back = makeItem(Material.BARRIER, ColorTranslator.translateColorCodes("&4&lBack"));
